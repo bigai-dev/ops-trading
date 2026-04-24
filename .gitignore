@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build output
+dist/
+dist-ssr/
+build/
+*.local
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment / secrets — never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+
+# Tooling caches / scratch
+.cache/
+.vite/
+.turbo/
+.playwright-mcp/
+playwright-report/
+test-results/
+
+# Dev screenshots & scratch assets (keep them local)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+!src/**/*.png
+!src/**/*.jpg
+!src/**/*.jpeg
+!src/**/*.svg
+!public/**/*
+
+# Misc
+coverage/
+*.tsbuildinfo

@@ -1,0 +1,3340 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuoteFlow — 贸易批发一站式</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #EFF2F7;
+      --surface:  #FFFFFF;
+      --surface2: #F7F9FC;
+      --border:   #E1E7F0;
+      --border2:  #C8D3E3;
+      --blue:     #1D4ED8;
+      --blue-bg:  rgba(29,78,216,0.07);
+      --blue-br:  rgba(29,78,216,0.2);
+      --gold:     #B45309;
+      --gold-bg:  rgba(180,83,9,0.07);
+      --gold-br:  rgba(180,83,9,0.2);
+      --green:    #047857;
+      --green-bg: rgba(4,120,87,0.07);
+      --green-br: rgba(4,120,87,0.2);
+      --red:      #B91C1C;
+      --red-bg:   rgba(185,28,28,0.07);
+      --r-btn:    8px;
+      --r-card:   12px;
+      --r-modal:  16px;
+      --text:     #0F172A;
+      --text2:    #334155;
+      --muted:    #94A3B8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ===== DARK MODE ===== */
+    body.dark-mode {
+      --bg: #0F172A;
+      --surface: #1E293B;
+      --surface2: #334155;
+      --border: #475569;
+      --border2: #64748B;
+      --text: #F1F5F9;
+      --text2: #CBD5E1;
+      --muted: #94A3B8;
+    }
+    body.dark-mode .quote-paper,
+    body.dark-mode .qp-table tr:nth-child(even) td,
+    body.dark-mode .qp-notes,
+    body.dark-mode .qp-dates {
+      background: white !important;
+      color: #0F172A !important;
+    }
+    body.dark-mode .quote-paper * {
+      color: inherit;
+    }
+    body.dark-mode .quote-paper .qp-header,
+    body.dark-mode .quote-paper .qp-header *,
+    body.dark-mode .quote-paper .qp-table th,
+    body.dark-mode .quote-paper .qpt-row.grand {
+      color: white !important;
+    }
+    body.dark-mode .quote-paper .qp-meta-lbl,
+    body.dark-mode .quote-paper .qp-notes-title,
+    body.dark-mode .quote-paper .qp-date-lbl,
+    body.dark-mode .quote-paper .qp-sig-block {
+      color: #94A3B8 !important;
+    }
+    body.dark-mode .quote-paper .qp-meta-val,
+    body.dark-mode .quote-paper .qp-date-val,
+    body.dark-mode .quote-paper td:first-child {
+      color: #0F172A !important;
+    }
+    body.dark-mode .quote-paper .qp-meta-sub,
+    body.dark-mode .quote-paper td,
+    body.dark-mode .quote-paper .qp-notes-text {
+      color: #334155 !important;
+    }
+    body.dark-mode .quote-paper .qpt-row {
+      color: #334155 !important;
+      border-color: #E1E7F0 !important;
+    }
+    body.dark-mode .quote-paper .qp-totals-box {
+      border-color: #E1E7F0 !important;
+    }
+    body.dark-mode .quote-paper .qp-table td {
+      border-color: #eee !important;
+    }
+    body.dark-mode .toast {
+      background: #1E293B;
+      border-color: #475569;
+    }
+
+    /* ===== APP HEADER ===== */
+    .app-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      height: 56px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .app-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--text);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .app-logo-icon {
+      width: 32px; height: 32px;
+      background: var(--blue);
+      border-radius: var(--r-btn);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+    }
+
+    .app-logo-sub { font-size: 0.65rem; color: var(--muted); font-weight: 400; display: block; line-height: 1; margin-top: 1px; }
+
+    .tab-nav {
+      display: flex;
+      background: var(--bg);
+      border-radius: var(--r-btn);
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .tab-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 16px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      min-height: 40px;
+    }
+
+    .tab-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+    /* Tab notification badges */
+    .tab-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 8px;
+      font-size: 0.6rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .tab-badge.red { background: var(--red); }
+    .tab-badge.amber { background: #D97706; }
+
+    .header-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+
+    /* ===== MAIN CONTENT ===== */
+    .tab-content { display: none; flex: 1; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }
+    .tab-content.active { display: flex; flex-direction: column; opacity: 1; transform: translateY(0); }
+    .tab-content.fade-out { opacity: 0; transform: translateY(8px); }
+    .tab-content.fade-in { opacity: 1; transform: translateY(0); }
+
+    /* ===== QUOTE TOOL ===== */
+    .quote-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 0;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .qform-wrap {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .qpreview-wrap {
+      background: var(--bg);
+      overflow-y: auto;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Form sections */
+    .form-section {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      overflow: hidden;
+    }
+
+    .fs-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .fs-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--text);
+      display: flex; align-items: center; gap: 7px;
+    }
+
+    .fs-body { padding: 14px; }
+    .fs-body.collapsed { display: none; }
+
+    .fg { margin-bottom: 10px; }
+    .fg:last-child { margin-bottom: 0; }
+
+    .fl {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 4px;
+    }
+
+    .fi, .fsel, .fta {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 7px 11px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.845rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .fi:focus, .fsel:focus, .fta:focus { border-color: var(--blue); }
+    .fsel { appearance: none; }
+    .fta { min-height: 60px; resize: vertical; }
+
+    .fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .fg-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+    /* Items table */
+    .items-header {
+      display: grid;
+      grid-template-columns: 1fr 70px 80px 80px 28px;
+      gap: 6px;
+      padding: 0 0 6px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .item-row {
+      display: grid;
+      grid-template-columns: 1fr 70px 80px 80px 28px;
+      gap: 6px;
+      margin-bottom: 6px;
+      align-items: center;
+    }
+
+    /* Item row slide-in animation */
+    .item-row-enter {
+      animation: slideDownIn 0.3s ease-out;
+    }
+    @keyframes slideDownIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .item-total-display {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 7px 11px;
+      font-size: 0.845rem;
+      font-weight: 600;
+      color: var(--text2);
+      text-align: right;
+    }
+
+    .rm-btn {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.15s;
+    }
+
+    .rm-btn:hover { background: var(--red-bg); color: var(--red); border-color: rgba(185,28,28,0.3); }
+
+    .add-item-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 12px;
+      border: 1px dashed var(--border2);
+      border-radius: var(--r-btn);
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'DM Sans', sans-serif;
+      width: 100%;
+      justify-content: center;
+      margin-top: 4px;
+      min-height: 40px;
+    }
+
+    .add-item-btn:hover { background: var(--blue-bg); color: var(--blue); border-color: var(--blue-br); }
+
+    /* Totals */
+    .totals-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      font-size: 0.83rem;
+    }
+
+    .total-row.grand {
+      border-top: 2px solid var(--border2);
+      padding-top: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--blue);
+    }
+
+    .total-lbl { color: var(--text2); font-weight: 500; }
+
+    /* Total flash animation */
+    .total-flash {
+      animation: totalFlash 0.4s ease-out;
+    }
+    @keyframes totalFlash {
+      0%  { background: rgba(29,78,216,0.15); }
+      100%{ background: transparent; }
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 10px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-btn);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 40px;
+    }
+
+    .btn-primary:hover { background: #1E40AF; box-shadow: 0 4px 14px rgba(29,78,216,0.3); transform: translateY(-1px); }
+
+    .btn-ghost {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 14px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: var(--r-btn);
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'DM Sans', sans-serif;
+      min-height: 40px;
+    }
+
+    .btn-ghost:hover { background: var(--surface2); color: var(--text2); border-color: var(--border2); }
+
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .toggle-lbl { font-size: 0.83rem; color: var(--text2); font-weight: 500; }
+
+    .toggle {
+      position: relative;
+      width: 36px; height: 20px;
+      display: inline-block;
+    }
+
+    .toggle input { display: none; }
+
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--border2);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .toggle-slider::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 16px; height: 16px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    .toggle input:checked + .toggle-slider { background: var(--blue); }
+    .toggle input:checked + .toggle-slider::after { left: 18px; }
+
+    /* ===== QUOTE PREVIEW (A4) ===== */
+    .quote-paper {
+      background: white;
+      width: 100%;
+      max-width: 680px;
+      border-radius: var(--r-card);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1), 0 1px 4px rgba(0,0,0,0.06);
+      overflow: hidden;
+      font-family: 'DM Sans', sans-serif;
+      transition: opacity 0.3s ease;
+    }
+
+    /* PDF generating shimmer effect */
+    .quote-paper.generating {
+      opacity: 0;
+    }
+    .quote-paper.shimmer-bg {
+      position: relative;
+    }
+    .quote-paper.shimmer-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.6) 50%, transparent 75%);
+      background-size: 200% 100%;
+      animation: shimmerMove 0.8s ease-in-out;
+      z-index: 10;
+      pointer-events: none;
+      border-radius: var(--r-card);
+    }
+    @keyframes shimmerMove {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .qp-header {
+      background: var(--blue);
+      padding: 28px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .qp-company-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .qp-company-details { font-size: 0.78rem; color: rgba(255,255,255,0.7); line-height: 1.6; }
+
+    .qp-title-block { text-align: right; }
+
+    .qp-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 1.6rem;
+      color: white;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .qp-num {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 4px;
+    }
+
+    .qp-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .qp-meta-block {
+      padding: 18px 32px;
+    }
+
+    .qp-meta-block:first-child { border-right: 1px solid #eee; }
+
+    .qp-meta-lbl {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .qp-meta-val { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .qp-meta-sub { font-size: 0.78rem; color: var(--text2); margin-top: 2px; line-height: 1.5; }
+
+    .qp-dates {
+      display: flex;
+      gap: 20px;
+      padding: 12px 32px;
+      border-bottom: 1px solid #eee;
+      background: var(--surface2);
+    }
+
+    .qp-date-item { font-size: 0.8rem; }
+    .qp-date-lbl { color: var(--muted); margin-right: 6px; }
+    .qp-date-val { font-weight: 600; color: var(--text); }
+
+    .qp-table-wrap { padding: 0 32px 24px; }
+
+    .qp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .qp-table th {
+      background: var(--blue);
+      color: white;
+      padding: 9px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: left;
+      position: sticky;
+      top: 0;
+    }
+
+    .qp-table th:last-child, .qp-table td:last-child { text-align: right; }
+    .qp-table th:nth-child(2), .qp-table td:nth-child(2) { text-align: center; }
+    .qp-table th:nth-child(3), .qp-table td:nth-child(3) { text-align: right; }
+
+    .qp-table td {
+      padding: 10px 12px;
+      font-size: 0.84rem;
+      border-bottom: 1px solid #eee;
+      color: var(--text2);
+    }
+
+    .qp-table tr:last-child td { border-bottom: none; }
+    .qp-table tr:nth-child(even) td { background: #FAFBFE; }
+
+    .qp-table td:first-child { color: var(--text); font-weight: 500; }
+    .qp-table td:last-child { font-weight: 600; }
+
+    .qp-totals {
+      padding: 0 32px 24px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .qp-totals-box {
+      width: 260px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-btn);
+      overflow: hidden;
+    }
+
+    .qpt-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 14px;
+      font-size: 0.83rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .qpt-row:last-child { border-bottom: none; }
+    .qpt-row.grand {
+      background: var(--blue);
+      color: white;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .qp-notes {
+      margin: 0 32px 28px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-btn);
+      padding: 14px;
+    }
+
+    .qp-notes-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .qp-notes-text { font-size: 0.8rem; color: var(--text2); line-height: 1.6; }
+
+    .qp-footer {
+      margin: 0 32px 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .qp-sig-block {
+      border-top: 2px solid var(--border2);
+      padding-top: 8px;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .print-toolbar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      width: 100%;
+      max-width: 680px;
+    }
+
+    /* ===== BADGE / PILL ===== */
+    .badge {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .b-blue  { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-br); }
+    .b-green { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-br); }
+    .b-gold  { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold-br); }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: white;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--green);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 999;
+      max-width: 320px;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { font-size: 1.1rem; }
+    .toast-title { font-size: 0.83rem; font-weight: 600; }
+    .toast-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+
+    /* Print styles */
+    @media print {
+      .app-header, .qform-wrap, .print-toolbar, .search-dropdown, .notif-dropdown { display: none !important; }
+      .tab-content { display: flex !important; opacity: 1 !important; transform: none !important; }
+      .quote-layout { grid-template-columns: 1fr !important; }
+      .qpreview-wrap { padding: 0 !important; background: white !important; }
+      .quote-paper { box-shadow: none !important; border-radius: 0 !important; max-width: 100% !important; }
+      body.dark-mode { --bg: #fff; --surface: #fff; --text: #0F172A; }
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+    /* ===== CRM MODULE ===== */
+    .module-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .alert-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px 18px;
+      border-radius: var(--r-card);
+      margin-bottom: 20px;
+      font-size: 0.84rem;
+      line-height: 1.6;
+    }
+
+    .alert-banner.warn {
+      background: var(--gold-bg);
+      border: 1px solid var(--gold-br);
+      color: var(--gold);
+    }
+
+    .alert-banner.danger {
+      background: var(--red-bg);
+      border: 1px solid rgba(185,28,28,0.2);
+      color: var(--red);
+    }
+
+    .alert-banner.info {
+      background: var(--blue-bg);
+      border: 1px solid var(--blue-br);
+      color: var(--blue);
+    }
+
+    .alert-banner-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .alert-banner strong { font-weight: 700; }
+    .alert-banner-list { margin-top: 4px; padding-left: 0; list-style: none; font-size: 0.8rem; }
+    .alert-banner-list li::before { content: '- '; }
+
+    /* CRM Pipeline filter bar */
+    .crm-filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .crm-filter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--text2);
+    }
+    .crm-filter-pill:hover { border-color: var(--blue-br); background: var(--blue-bg); }
+    .crm-filter-pill.active {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+    .crm-filter-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      border-radius: 9px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      background: rgba(0,0,0,0.1);
+      color: inherit;
+    }
+    .crm-filter-pill.active .crm-filter-count { background: rgba(255,255,255,0.25); }
+
+    .crm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .crm-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      padding: 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .crm-card:hover {
+      border-color: var(--blue-br);
+      box-shadow: 0 4px 16px rgba(29,78,216,0.08);
+      transform: translateY(-1px);
+    }
+
+    /* Overdue pulsing amber left border */
+    .crm-card.overdue {
+      border-left: 3px solid #D97706;
+      animation: overduePulse 2s ease-in-out infinite;
+    }
+    @keyframes overduePulse {
+      0%, 100% { border-left-color: #D97706; }
+      50% { border-left-color: #FBBF24; }
+    }
+
+    .crm-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .crm-company {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .crm-contact { font-size: 0.82rem; color: var(--text2); margin-top: 2px; }
+    .crm-phone { font-size: 0.78rem; color: var(--muted); margin-top: 1px; }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .status-potential { background: rgba(217,119,6,0.1); color: #D97706; border: 1px solid rgba(217,119,6,0.25); }
+    .status-following { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-br); }
+    .status-closed { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-br); }
+    .status-maintain { background: rgba(147,51,234,0.08); color: #7C3AED; border: 1px solid rgba(147,51,234,0.2); }
+
+    .crm-card-stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+    }
+
+    .crm-stat-item { display: flex; flex-direction: column; gap: 2px; }
+    .crm-stat-label { color: var(--muted); font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .crm-stat-val { font-weight: 700; color: var(--text); }
+
+    .crm-card-note {
+      margin-top: 10px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    .crm-overdue-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--red);
+      margin-top: 6px;
+    }
+
+    /* CRM Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      border-radius: var(--r-modal);
+      width: 520px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      transform: scale(0.95);
+      transition: transform 0.2s;
+    }
+
+    .modal-overlay.open .modal-box { transform: scale(1); }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: var(--r-btn);
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .modal-close:hover { background: var(--red-bg); color: var(--red); border-color: rgba(185,28,28,0.3); }
+
+    .modal-body { padding: 20px 24px; }
+
+    .modal-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .modal-detail-item { display: flex; flex-direction: column; gap: 3px; }
+    .modal-detail-label { font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .modal-detail-value { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+
+    .modal-notes-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-btn);
+      padding: 14px;
+      font-size: 0.84rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .modal-section-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--text);
+      margin-bottom: 10px;
+      margin-top: 16px;
+    }
+
+    /* ===== INVENTORY MODULE ===== */
+    .inv-summary {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .inv-summary-card {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      padding: 16px 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .inv-summary-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .inv-summary-value {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--text);
+    }
+
+    .inv-summary-value.blue { color: var(--blue); }
+    .inv-summary-value.green { color: var(--green); }
+    .inv-summary-value.red { color: var(--red); }
+
+    .inv-table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      overflow: hidden;
+    }
+
+    .inv-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .inv-table th {
+      background: var(--surface2);
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .inv-table td {
+      padding: 12px 16px;
+      font-size: 0.84rem;
+      color: var(--text2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .inv-table tr:last-child td { border-bottom: none; }
+    .inv-table tr:hover td { background: var(--surface2); }
+
+    /* Out-of-stock row tinted background */
+    .inv-table tr.out-of-stock td {
+      background: rgba(185,28,28,0.04);
+    }
+    .inv-table tr.out-of-stock:hover td {
+      background: rgba(185,28,28,0.08);
+    }
+
+    .inv-table td:first-child {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .inv-sku {
+      font-family: monospace;
+      font-size: 0.76rem;
+      color: var(--muted);
+      background: var(--surface2);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .stock-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stock-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--bg);
+      border-radius: 4px;
+      overflow: hidden;
+      max-width: 100px;
+    }
+
+    .stock-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0;
+      transition: width 0.6s ease-out;
+    }
+
+    .stock-num {
+      font-weight: 700;
+      font-size: 0.82rem;
+      min-width: 36px;
+      text-align: right;
+    }
+
+    .stock-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .stock-ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-br); }
+    .stock-low { background: rgba(217,119,6,0.1); color: #D97706; border: 1px solid rgba(217,119,6,0.25); }
+    .stock-out { background: var(--red-bg); color: var(--red); border: 1px solid rgba(185,28,28,0.2); }
+
+    /* Pulsing dot for low stock alert banner */
+    .pulsing-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--red);
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: pulseDot 1.5s ease-in-out infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* ===== DASHBOARD MODULE ===== */
+    .dash-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .dash-kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      padding: 18px 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .dash-kpi-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dash-kpi-value {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 1.6rem;
+      color: var(--text);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .dash-kpi-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* KPI trend indicators */
+    .kpi-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+    .kpi-trend.up { color: var(--green); background: var(--green-bg); }
+    .kpi-trend.down { color: var(--red); background: var(--red-bg); }
+
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .dash-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .dash-panel-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bar-chart-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .bar-chart-label {
+      font-size: 0.78rem;
+      color: var(--text2);
+      width: 160px;
+      flex-shrink: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bar-chart-track {
+      flex: 1;
+      height: 22px;
+      background: var(--bg);
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-chart-fill {
+      height: 100%;
+      border-radius: 5px;
+      width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: white;
+      min-width: 48px;
+      transition: width 0.4s ease-out;
+    }
+
+    .dash-big-number {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .dash-big-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 3.2rem;
+      color: var(--blue);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .dash-big-sub {
+      font-size: 0.88rem;
+      color: var(--text2);
+      margin-top: 10px;
+    }
+
+    .dash-big-detail {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Form fade transition for newQuote */
+    .form-fade-out {
+      animation: formFadeOut 0.25s ease-out;
+    }
+    @keyframes formFadeOut {
+      from { opacity: 1; }
+      to   { opacity: 0.3; }
+    }
+    .form-fade-in {
+      animation: formFadeIn 0.25s ease-in;
+    }
+    @keyframes formFadeIn {
+      from { opacity: 0.3; }
+      to   { opacity: 1; }
+    }
+
+    /* Tab pulse animation for data flow */
+    .tab-pulse {
+      animation: tabPulseAnim 0.4s ease-out;
+    }
+    @keyframes tabPulseAnim {
+      0%   { background: var(--blue-bg); }
+      100% { background: transparent; }
+    }
+
+    /* ===== MOBILE READABILITY ===== */
+    @media (max-width: 768px) {
+      body { font-size: 15px; }
+      * { min-font-size: 13px; }
+
+      .quote-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .qform-wrap {
+        max-height: 50vh;
+        overflow-y: auto;
+      }
+
+      .qpreview-wrap {
+        padding: 16px;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .quote-paper {
+        min-width: 600px;
+      }
+
+      .fg-row, .fg-row3 {
+        grid-template-columns: 1fr;
+      }
+
+      .item-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .items-header { display: none; }
+
+      .dash-kpi-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .crm-grid {
+        grid-template-columns: 1fr;
+      }
+
+
+      .crm-filter-bar {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 8px;
+      }
+
+      .tab-nav {
+        overflow-x: auto;
+        flex-shrink: 1;
+        min-width: 0;
+      }
+
+      .tab-btn {
+        font-size: 0.72rem;
+        padding: 6px 10px;
+        white-space: nowrap;
+      }
+
+      .fl, .crm-stat-label, .inv-summary-label, .dash-kpi-label,
+      .badge, .crm-overdue-tag, .stock-status {
+        font-size: max(0.68rem, 13px);
+      }
+
+      .fi, .fsel, .fta {
+        font-size: max(0.845rem, 13px);
+      }
+    }
+    .btn-download {
+      display: flex; align-items: center; gap: 7px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #1D4ED8, #2563EB);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(29,78,216,0.3);
+    }
+    .btn-download:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(29,78,216,0.4);
+    }
+
+    /* Chart.js container */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 260px;
+    }
+    .chart-container.doughnut {
+      height: 220px;
+      max-width: 220px;
+      margin: 0 auto;
+    }
+    .doughnut-center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 2rem;
+      color: var(--text);
+      pointer-events: none;
+    }
+
+    /* Stock level chart in inventory */
+    .inv-chart-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .inv-chart-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ===== SKELETON LOADING ===== */
+    .skeleton {
+      background: linear-gradient(90deg, #E1E7F0 25%, #F7F9FC 50%, #E1E7F0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+    body.dark-mode .skeleton {
+      background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+      background-size: 200% 100%;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skeleton-kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .skeleton-kpi { height: 100px; }
+    .skeleton-panel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .skeleton-panel { height: 300px; }
+    .skeleton-bar { height: 22px; margin-bottom: 10px; width: 80%; }
+
+    /* ===== GLOBAL SEARCH ===== */
+    .global-search-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .global-search-input {
+      width: 220px;
+      padding: 7px 12px 7px 32px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-btn);
+      background: var(--surface2);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      outline: none;
+      transition: border-color 0.15s, width 0.2s;
+    }
+    .global-search-input:focus { border-color: var(--blue); width: 280px; }
+    .global-search-icon {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); pointer-events: none;
+    }
+    .search-dropdown {
+      position: absolute; top: 100%; left: 0; right: 0;
+      min-width: 320px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+      z-index: 300;
+      max-height: 360px;
+      overflow-y: auto;
+      display: none;
+    }
+    .search-dropdown.open { display: block; }
+    .search-group-title {
+      padding: 8px 14px 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .search-result-item {
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--text);
+      transition: background 0.1s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .search-result-item:hover { background: var(--blue-bg); }
+    .search-result-item .sr-sub { font-size: 0.72rem; color: var(--muted); margin-left: auto; }
+    .search-highlight { background: rgba(29,78,216,0.15); border-radius: 3px; padding: 0 2px; }
+
+    /* ===== NOTIFICATION CENTER ===== */
+    .notif-wrap { position: relative; }
+    .notif-bell {
+      width: 36px; height: 36px;
+      border-radius: var(--r-btn);
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .notif-bell:hover { background: var(--surface2); color: var(--text); }
+    .notif-badge {
+      position: absolute; top: -4px; right: -4px;
+      min-width: 18px; height: 18px; padding: 0 4px;
+      border-radius: 9px; font-size: 0.6rem; font-weight: 800;
+      background: var(--red); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+    .notif-badge:empty { display: none; }
+    .notif-dropdown {
+      position: absolute; top: 100%; right: 0;
+      width: 340px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+      z-index: 300;
+      max-height: 400px;
+      overflow-y: auto;
+      display: none;
+      margin-top: 6px;
+    }
+    .notif-dropdown.open { display: block; }
+    .notif-dropdown-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .notif-item {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: var(--surface2); }
+    .notif-item-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+    .notif-item-text { font-size: 0.82rem; color: var(--text); line-height: 1.4; }
+    .notif-item-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .notif-empty { padding: 24px 16px; text-align: center; color: var(--muted); font-size: 0.84rem; }
+
+    /* ===== DARK MODE TOGGLE ===== */
+    .dark-toggle {
+      width: 36px; height: 36px;
+      border-radius: var(--r-btn);
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+      font-size: 1rem;
+    }
+    .dark-toggle:hover { background: var(--surface2); color: var(--text); }
+
+    /* ===== RESET DATA BUTTON ===== */
+    .reset-data-btn {
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-btn);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.7rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.15s;
+    }
+    .reset-data-btn:hover { background: var(--red-bg); color: var(--red); border-color: rgba(185,28,28,0.3); }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+<!-- ===== APP HEADER ===== -->
+<header class="app-header">
+  <div class="app-logo">
+    <div class="app-logo-icon">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    </div>
+    <div>
+      <span>QuoteFlow</span>
+      <span class="app-logo-sub">贸易公司报价系统</span>
+    </div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn" id="tab-btn-quote" onclick="switchTab('quote', this)">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="13" y2="11"/></svg>
+      报价工具
+    </button>
+    <button class="tab-btn" id="tab-btn-crm" onclick="switchTab('crm', this)">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      CRM 客户
+    </button>
+    <button class="tab-btn" id="tab-btn-inventory" onclick="switchTab('inventory', this)">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      库存管理
+    </button>
+    <button class="tab-btn" id="tab-btn-dashboard" onclick="switchTab('dashboard', this)">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Dashboard
+    </button>
+  </div>
+
+  <div class="header-right">
+    <!-- Global Search -->
+    <div class="global-search-wrap">
+      <span class="global-search-icon">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <input class="global-search-input" id="global-search" type="text" placeholder="搜索客户、产品、报价..." oninput="handleGlobalSearch(this.value)" onfocus="handleGlobalSearch(this.value)" autocomplete="off">
+      <div class="search-dropdown" id="search-dropdown"></div>
+    </div>
+
+    <!-- Notification Center -->
+    <div class="notif-wrap">
+      <button class="notif-bell" id="notif-bell" onclick="toggleNotifications()">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-badge" id="notif-badge"></span>
+      </button>
+      <div class="notif-dropdown" id="notif-dropdown"></div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <button class="dark-toggle" id="dark-toggle" onclick="toggleDarkMode()" title="切换深色模式">
+      <span id="dark-toggle-icon">&#9790;</span>
+    </button>
+
+    <!-- Reset Data -->
+    <button class="reset-data-btn" onclick="resetAllData()" title="重置所有数据到初始状态">重置数据</button>
+  </div>
+</header>
+
+<!-- ===== QUOTE TOOL TAB ===== -->
+<div id="tab-quote" class="tab-content">
+  <div class="quote-layout">
+
+    <!-- Form Panel -->
+    <div class="qform-wrap" id="qform-wrap">
+
+      <!-- Company Settings -->
+      <div class="form-section">
+        <div class="fs-header" onclick="toggleSection(this)">
+          <span class="fs-title">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            我的公司资料
+          </span>
+          <span style="color:var(--muted);font-size:0.8rem;">&#9662;</span>
+        </div>
+        <div class="fs-body collapsed" id="company-body">
+          <div class="fg">
+            <label class="fl">公司名称</label>
+            <input class="fi" id="co-name" value="明盛贸易有限公司" oninput="renderPreview()">
+          </div>
+          <div class="fg-row">
+            <div class="fg">
+              <label class="fl">电话</label>
+              <input class="fi" id="co-tel" value="+60 12-888 8888" oninput="renderPreview()">
+            </div>
+            <div class="fg">
+              <label class="fl">邮箱</label>
+              <input class="fi" id="co-email" value="sales@mingsheng.com.my" oninput="renderPreview()">
+            </div>
+          </div>
+          <div class="fg">
+            <label class="fl">地址</label>
+            <input class="fi" id="co-addr" value="No. 88, Jalan Perdagangan, 50480 Kuala Lumpur" oninput="renderPreview()">
+          </div>
+          <div class="fg">
+            <label class="fl">SSM 注册号</label>
+            <input class="fi" id="co-ssm" value="202301012345 (1012345-H)" oninput="renderPreview()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Client Info -->
+      <div class="form-section">
+        <div class="fs-header" onclick="toggleSection(this)">
+          <span class="fs-title">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            客户资料
+          </span>
+          <span style="color:var(--muted);font-size:0.8rem;">&#9662;</span>
+        </div>
+        <div class="fs-body">
+          <div class="fg">
+            <label class="fl">客户公司名</label>
+            <input class="fi" id="cl-company" placeholder="ABC Sdn Bhd" oninput="renderPreview()">
+          </div>
+          <div class="fg-row">
+            <div class="fg">
+              <label class="fl">联系人</label>
+              <input class="fi" id="cl-name" placeholder="Encik Ahmad" oninput="renderPreview()">
+            </div>
+            <div class="fg">
+              <label class="fl">电话</label>
+              <input class="fi" id="cl-tel" placeholder="+60 11-xxx xxxx" oninput="renderPreview()">
+            </div>
+          </div>
+          <div class="fg">
+            <label class="fl">邮箱</label>
+            <input class="fi" id="cl-email" placeholder="client@company.com" oninput="renderPreview()">
+          </div>
+          <div class="fg">
+            <label class="fl">地址</label>
+            <input class="fi" id="cl-addr" placeholder="客户地址..." oninput="renderPreview()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Items -->
+      <div class="form-section">
+        <div class="fs-header" onclick="toggleSection(this)">
+          <span class="fs-title">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+            报价项目
+          </span>
+          <span style="color:var(--muted);font-size:0.8rem;">&#9662;</span>
+        </div>
+        <div class="fs-body">
+          <div class="items-header">
+            <span>品名 / 描述</span>
+            <span style="text-align:center;">数量</span>
+            <span style="text-align:right;">单价 (RM)</span>
+            <span style="text-align:right;">小计</span>
+            <span></span>
+          </div>
+          <div id="items-container"></div>
+          <button class="add-item-btn" onclick="addItem()">
+            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            添加品项
+          </button>
+        </div>
+      </div>
+
+      <!-- Totals & Settings -->
+      <div class="form-section">
+        <div class="fs-header" onclick="toggleSection(this)">
+          <span class="fs-title">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            折扣 & 税务
+          </span>
+          <span style="color:var(--muted);font-size:0.8rem;">&#9662;</span>
+        </div>
+        <div class="fs-body">
+          <div class="fg-row">
+            <div class="fg">
+              <label class="fl">折扣 (RM)</label>
+              <input class="fi" id="discount" type="number" min="0" value="0" oninput="renderPreview()">
+            </div>
+            <div class="fg">
+              <label class="fl">运费 (RM)</label>
+              <input class="fi" id="shipping" type="number" min="0" value="0" oninput="renderPreview()">
+            </div>
+          </div>
+          <div class="toggle-row" style="margin-top:8px;">
+            <span class="toggle-lbl">征收 SST 8%</span>
+            <label class="toggle">
+              <input type="checkbox" id="sst-toggle" onchange="renderPreview()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="totals-grid" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+            <div class="total-row"><span class="total-lbl">小计</span><span id="sub-total">RM 0.00</span></div>
+            <div class="total-row" id="sst-row" style="display:none;"><span class="total-lbl">SST (8%)</span><span id="sst-amt">RM 0.00</span></div>
+            <div class="total-row" id="disc-row" style="display:none;"><span class="total-lbl">折扣</span><span id="disc-amt" style="color:var(--red);">- RM 0.00</span></div>
+            <div class="total-row" id="ship-row" style="display:none;"><span class="total-lbl">运费</span><span id="ship-amt">RM 0.00</span></div>
+            <div class="total-row grand"><span>总计</span><span id="grand-total">RM 0.00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="form-section">
+        <div class="fs-header" onclick="toggleSection(this)">
+          <span class="fs-title">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            备注 & 条款
+          </span>
+          <span style="color:var(--muted);font-size:0.8rem;">&#9662;</span>
+        </div>
+        <div class="fs-body">
+          <div class="fg">
+            <label class="fl">有效期</label>
+            <select class="fsel" id="validity" onchange="renderPreview()">
+              <option value="14">14天</option>
+              <option value="30" selected>30天</option>
+              <option value="60">60天</option>
+              <option value="90">90天</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">备注</label>
+            <textarea class="fta" id="notes" oninput="renderPreview()" placeholder="付款条件、交货安排等...">付款条件：50% 预付，50% 于交货后7天内付清。
+价格为含税价格（如适用）。
+交货时间：确认订单后 7-14 个工作日。</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-btns">
+        <button class="btn-primary" onclick="finalizeQuote()">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          打印 / PDF
+        </button>
+        <button class="btn-ghost" onclick="clearForm()">清空</button>
+        <button class="btn-ghost" onclick="newQuote()">新报价单</button>
+      </div>
+    </div>
+
+    <!-- Preview Panel -->
+    <div class="qpreview-wrap">
+      <div class="print-toolbar">
+        <span style="font-size:0.78rem;color:var(--muted);font-weight:600;margin-right:4px;">报价预览</span>
+        <span class="badge b-blue" id="preview-badge">实时更新</span>
+        <div style="margin-left:auto;display:flex;gap:8px;">
+          <button class="btn-ghost" style="padding:6px 12px;font-size:0.75rem;" onclick="copyQuoteNum()">复制编号</button>
+          <button class="btn-download" onclick="downloadPDF()">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            下载 PDF
+          </button>
+          <button class="btn-primary" style="padding:7px 14px;font-size:0.78rem;" onclick="printQuote()">
+            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            打印
+          </button>
+        </div>
+      </div>
+      <div class="quote-paper" id="quote-paper">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+  </div>
+</div><!-- /tab-quote -->
+
+<!-- ===== CRM TAB ===== -->
+<div id="tab-crm" class="tab-content">
+  <div class="module-wrap" id="crm-content">
+    <!-- Rendered by JS -->
+  </div>
+</div>
+
+<!-- ===== INVENTORY TAB ===== -->
+<div id="tab-inventory" class="tab-content">
+  <div class="module-wrap" id="inventory-content">
+    <!-- Rendered by JS -->
+  </div>
+</div>
+
+<!-- ===== DASHBOARD TAB ===== -->
+<div id="tab-dashboard" class="tab-content">
+  <div class="module-wrap" id="dashboard-content">
+    <!-- Rendered by JS -->
+  </div>
+</div>
+
+<!-- CRM Modal -->
+<div class="modal-overlay" id="crm-modal" onclick="if(event.target===this)closeCrmModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-client-name"></span>
+      <button class="modal-close" onclick="closeCrmModal()">&#10005;</button>
+    </div>
+    <div class="modal-body" id="modal-body">
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast-el">
+  <span class="toast-icon" id="t-icon"></span>
+  <div>
+    <div class="toast-title" id="t-title">操作成功</div>
+    <div class="toast-sub" id="t-sub"></div>
+  </div>
+</div>
+
+<script>
+// ===========================
+// DEFAULT DATA
+// ===========================
+const DEFAULT_ITEMS = [
+  { desc: 'Steel Pipe 40mm \u00d7 6m',        qty: 100, price: 32 },
+  { desc: 'Aluminium Sheet 2mm \u00d7 1200mm', qty: 50,  price: 36 },
+  { desc: 'Stainless Bolt M12 (box/100)', qty: 20,  price: 28 },
+];
+
+const DEFAULT_CLIENTS = [
+  { id:1, company:'ABC Hardware Sdn Bhd', contact:'Mr. Tan', phone:'012-345 6789', email:'tan@abc.com', status:'\u6210\u4ea4', lastContact:'2026-03-24', totalOrders:12, totalSpent:45600, notes:'\u8001\u5ba2\u6237\uff0c\u6bcf\u6708\u56fa\u5b9a\u91c7\u8d2d' },
+  { id:2, company:'KL Steel Trading', contact:'Ahmad', phone:'019-876 5432', email:'ahmad@klsteel.com', status:'\u8ddf\u8fdb\u4e2d', lastContact:'2026-03-20', totalOrders:3, totalSpent:12800, notes:'\u4ef7\u683c\u654f\u611f\uff0c\u9700\u8981\u7ed9\u6298\u6263' },
+  { id:3, company:'Mega Construction', contact:'David Lee', phone:'016-789 0123', email:'david@mega.com', status:'\u6f5c\u5728', lastContact:'2026-03-18', totalOrders:0, totalSpent:0, notes:'\u4e0a\u5468\u5c55\u4f1a\u8ba4\u8bc6\uff0c\u5bf9Steel Pipe\u6709\u5174\u8da3' },
+  { id:4, company:'Soon Heng Auto Parts', contact:'\u6797\u8001\u677f', phone:'013-456 7890', email:'sh@auto.com', status:'\u6210\u4ea4', lastContact:'2026-03-23', totalOrders:8, totalSpent:28400, notes:'\u6c7d\u8f66\u96f6\u4ef6\u6279\u53d1\u5546' },
+  { id:5, company:'Johor Building Supply', contact:'Muthu', phone:'017-234 5678', email:'muthu@jbs.com', status:'\u7ef4\u62a4', lastContact:'2026-03-15', totalOrders:20, totalSpent:89200, notes:'\u5927\u5ba2\u6237\uff0c\u6bcf\u5b63\u5ea6review\u4ef7\u683c' },
+  { id:6, company:'Penang Metal Works', contact:'Ong', phone:'014-567 8901', email:'ong@pmw.com', status:'\u8ddf\u8fdb\u4e2d', lastContact:'2026-03-21', totalOrders:1, totalSpent:3200, notes:'\u7b2c\u4e00\u5355\u5df2\u5b8c\u6210\uff0c\u7b49\u4ed6\u56de\u8d2d' },
+];
+
+const DEFAULT_INVENTORY = [
+  { id:1, name:'Steel Pipe 40mm \u00d7 6m', sku:'SP-40-6M', stock:450, minStock:100, price:32, unit:'\u6839' },
+  { id:2, name:'Aluminium Sheet 2mm \u00d7 1200mm', sku:'AS-2-1200', stock:180, minStock:50, price:36, unit:'\u7247' },
+  { id:3, name:'Stainless Bolt M12 (box/100)', sku:'SB-M12', stock:85, minStock:80, price:28, unit:'\u76d2' },
+  { id:4, name:'Copper Wire 2.5mm (100m roll)', sku:'CW-25-100', stock:12, minStock:30, price:145, unit:'\u5377' },
+  { id:5, name:'Galvanized Pipe 50mm \u00d7 6m', sku:'GP-50-6M', stock:320, minStock:80, price:45, unit:'\u6839' },
+  { id:6, name:'Iron Plate 3mm \u00d7 1200mm', sku:'IP-3-1200', stock:0, minStock:40, price:52, unit:'\u7247' },
+  { id:7, name:'Brass Fitting 25mm', sku:'BF-25', stock:500, minStock:200, price:8.50, unit:'\u4e2a' },
+  { id:8, name:'PVC Pipe 32mm \u00d7 4m', sku:'PP-32-4M', stock:200, minStock:100, price:12, unit:'\u6839' },
+];
+
+// ===========================
+// localStorage PERSISTENCE
+// ===========================
+function loadFromStorage(key, fallback) {
+  try {
+    const data = localStorage.getItem('qf_' + key);
+    return data ? JSON.parse(data) : JSON.parse(JSON.stringify(fallback));
+  } catch(e) { return JSON.parse(JSON.stringify(fallback)); }
+}
+function saveToStorage(key, data) {
+  try { localStorage.setItem('qf_' + key, JSON.stringify(data)); } catch(e) {}
+}
+function saveAllData() {
+  saveToStorage('items', items);
+  saveToStorage('quoteCounter', quoteCounter);
+  saveToStorage('clients', CLIENTS_DATA);
+  saveToStorage('inventory', INVENTORY);
+}
+
+// ===========================
+// STATE (restored from localStorage)
+// ===========================
+let items = loadFromStorage('items', DEFAULT_ITEMS);
+let quoteCounter = loadFromStorage('quoteCounter', 24);
+let crmFilterStatus = '\u5168\u90e8';
+
+const CLIENTS_DATA = loadFromStorage('clients', DEFAULT_CLIENTS);
+const INVENTORY = loadFromStorage('inventory', DEFAULT_INVENTORY);
+
+const REFERENCE_DATE = new Date('2026-03-24');
+
+// ===========================
+// RESET ALL DATA
+// ===========================
+function resetAllData() {
+  if (!confirm('确定要重置所有数据到初始状态吗？此操作不可撤销。')) return;
+  localStorage.removeItem('qf_items');
+  localStorage.removeItem('qf_quoteCounter');
+  localStorage.removeItem('qf_clients');
+  localStorage.removeItem('qf_inventory');
+  localStorage.removeItem('qf_darkMode');
+  location.reload();
+}
+
+// ===========================
+// REUSABLE countUp()
+// ===========================
+function countUp(el, target, duration, prefix, suffix) {
+  prefix = prefix || '';
+  suffix = suffix || '';
+  duration = duration || 600;
+  const start = performance.now();
+  const isFloat = String(target).includes('.');
+
+  function step(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    // ease-out cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = eased * target;
+    if (isFloat) {
+      el.textContent = prefix + current.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + suffix;
+    } else {
+      el.textContent = prefix + Math.round(current).toLocaleString() + suffix;
+    }
+    if (progress < 1) requestAnimationFrame(step);
+    else {
+      if (isFloat) {
+        el.textContent = prefix + target.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + suffix;
+      } else {
+        el.textContent = prefix + Math.round(target).toLocaleString() + suffix;
+      }
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+// ===========================
+// TAB NOTIFICATION BADGES
+// ===========================
+function updateTabBadges() {
+  // CRM badge: overdue clients
+  const overdueCount = getOverdueClients().length;
+  const crmBtn = document.getElementById('tab-btn-crm');
+  let crmBadge = crmBtn.querySelector('.tab-badge');
+  if (overdueCount > 0) {
+    if (!crmBadge) {
+      crmBadge = document.createElement('span');
+      crmBadge.className = 'tab-badge red';
+      crmBtn.appendChild(crmBadge);
+    }
+    crmBadge.textContent = overdueCount;
+  } else if (crmBadge) {
+    crmBadge.remove();
+  }
+
+  // Inventory badge: low/out stock
+  const lowStockCount = INVENTORY.filter(it => it.stock === 0 || it.stock <= it.minStock * 1.2).length;
+  const invBtn = document.getElementById('tab-btn-inventory');
+  let invBadge = invBtn.querySelector('.tab-badge');
+  if (lowStockCount > 0) {
+    if (!invBadge) {
+      invBadge = document.createElement('span');
+      invBadge.className = 'tab-badge amber';
+      invBtn.appendChild(invBadge);
+    }
+    invBadge.textContent = lowStockCount;
+  } else if (invBadge) {
+    invBadge.remove();
+  }
+}
+
+// ===========================
+// TABS
+// ===========================
+function switchTab(tab, btn) {
+  const currentActive = document.querySelector('.tab-content.active');
+  const nextTab = document.getElementById(`tab-${tab}`);
+
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  if (currentActive && currentActive !== nextTab) {
+    currentActive.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+    currentActive.style.opacity = '0';
+    currentActive.style.transform = 'translateY(8px)';
+    setTimeout(() => {
+      currentActive.classList.remove('active');
+      currentActive.style.transition = '';
+      currentActive.style.opacity = '';
+      currentActive.style.transform = '';
+      showNewTab(tab, nextTab);
+    }, 150);
+  } else {
+    if (currentActive) { currentActive.classList.remove('active'); }
+    showNewTab(tab, nextTab);
+  }
+}
+
+function showNewTab(tab, nextTab) {
+  if (tab === 'dashboard') {
+    // Show skeleton first
+    const container = document.getElementById('dashboard-content');
+    container.innerHTML = getDashboardSkeleton();
+    nextTab.classList.add('active');
+    nextTab.style.opacity = '0';
+    nextTab.style.transform = 'translateY(8px)';
+    requestAnimationFrame(() => {
+      nextTab.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      nextTab.style.opacity = '1';
+      nextTab.style.transform = 'translateY(0)';
+    });
+    setTimeout(() => {
+      renderDashboard();
+      nextTab.style.transition = '';
+    }, 300);
+  } else {
+    nextTab.classList.add('active');
+    nextTab.style.opacity = '0';
+    nextTab.style.transform = 'translateY(8px)';
+    requestAnimationFrame(() => {
+      nextTab.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      nextTab.style.opacity = '1';
+      nextTab.style.transform = 'translateY(0)';
+      setTimeout(() => { nextTab.style.transition = ''; }, 250);
+    });
+    if (tab === 'crm') renderCRM();
+    if (tab === 'inventory') renderInventory();
+  }
+}
+
+function getDashboardSkeleton() {
+  return `
+    <div class="skeleton-kpi-row">
+      <div class="skeleton skeleton-kpi"></div>
+      <div class="skeleton skeleton-kpi"></div>
+      <div class="skeleton skeleton-kpi"></div>
+      <div class="skeleton skeleton-kpi"></div>
+    </div>
+    <div class="skeleton-panel-row">
+      <div class="skeleton skeleton-panel"></div>
+      <div class="skeleton skeleton-panel"></div>
+    </div>
+    <div class="skeleton-panel-row">
+      <div class="skeleton skeleton-panel" style="height:200px;"></div>
+      <div class="skeleton skeleton-panel" style="height:200px;"></div>
+    </div>
+  `;
+}
+
+// ===========================
+// FORM SECTIONS TOGGLE
+// ===========================
+function toggleSection(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('span:last-child');
+  body.classList.toggle('collapsed');
+  arrow.innerHTML = body.classList.contains('collapsed') ? '&#9656;' : '&#9662;';
+}
+
+// ===========================
+// ITEMS
+// ===========================
+function renderItems() {
+  const container = document.getElementById('items-container');
+  container.innerHTML = '';
+  items.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    const total = (item.qty || 0) * (item.price || 0);
+    row.innerHTML = `
+      <input class="fi" placeholder="\u54c1\u540d/\u63cf\u8ff0" value="${item.desc}" oninput="updateItem(${i},'desc',this.value)">
+      <input class="fi" type="number" min="0" value="${item.qty}" oninput="updateItem(${i},'qty',+this.value)" style="text-align:center;">
+      <input class="fi" type="number" min="0" step="0.01" value="${item.price}" oninput="updateItem(${i},'price',+this.value)" style="text-align:right;">
+      <div class="item-total-display">RM ${fmt(total)}</div>
+      <button class="rm-btn" onclick="removeItem(${i})">&#10005;</button>
+    `;
+    container.appendChild(row);
+  });
+  renderPreview();
+}
+
+let prevGrandTotal = null;
+
+function updateItem(i, field, val) {
+  items[i][field] = val;
+  const rows = document.querySelectorAll('.item-row');
+  const total = (items[i].qty || 0) * (items[i].price || 0);
+  if (rows[i]) rows[i].querySelector('.item-total-display').textContent = `RM ${fmt(total)}`;
+  saveToStorage('items', items);
+  renderPreview();
+}
+
+function addItem() {
+  items.push({ desc: '', qty: 1, price: 0 });
+  saveToStorage('items', items);
+  renderItems();
+  setTimeout(() => {
+    const rows = document.querySelectorAll('.item-row');
+    if (rows.length) {
+      const lastRow = rows[rows.length - 1];
+      lastRow.classList.add('item-row-enter');
+      lastRow.querySelector('.fi').focus();
+    }
+  }, 50);
+}
+
+function removeItem(i) {
+  items.splice(i, 1);
+  saveToStorage('items', items);
+  renderItems();
+}
+
+// ===========================
+// CALCULATIONS
+// ===========================
+function fmt(n) { return Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+function calcTotals() {
+  const subtotal = items.reduce((s, it) => s + (it.qty||0)*(it.price||0), 0);
+  const discount = parseFloat(document.getElementById('discount').value) || 0;
+  const shipping = parseFloat(document.getElementById('shipping').value) || 0;
+  const sst      = document.getElementById('sst-toggle').checked;
+  const sstAmt   = sst ? subtotal * 0.08 : 0;
+  const grand    = subtotal - discount + shipping + sstAmt;
+
+  // Update sidebar totals
+  document.getElementById('sub-total').textContent  = `RM ${fmt(subtotal)}`;
+  document.getElementById('sst-amt').textContent    = `RM ${fmt(sstAmt)}`;
+  document.getElementById('disc-amt').textContent   = `- RM ${fmt(discount)}`;
+  document.getElementById('ship-amt').textContent   = `RM ${fmt(shipping)}`;
+
+  const grandEl = document.getElementById('grand-total');
+  grandEl.textContent = `RM ${fmt(grand)}`;
+
+  // Flash effect on total change
+  if (prevGrandTotal !== null && prevGrandTotal !== grand) {
+    grandEl.classList.remove('total-flash');
+    void grandEl.offsetWidth; // force reflow
+    grandEl.classList.add('total-flash');
+  }
+  prevGrandTotal = grand;
+
+  document.getElementById('sst-row').style.display  = sst ? '' : 'none';
+  document.getElementById('disc-row').style.display = discount > 0 ? '' : 'none';
+  document.getElementById('ship-row').style.display = shipping > 0 ? '' : 'none';
+
+  return { subtotal, discount, shipping, sstAmt, grand, sst };
+}
+
+// ===========================
+// QUOTE PREVIEW with shimmer
+// ===========================
+function getVal(id) { return document.getElementById(id)?.value || ''; }
+
+let previewTimeout;
+function renderPreview() {
+  clearTimeout(previewTimeout);
+  const paper = document.getElementById('quote-paper');
+
+  // Brief shimmer effect
+  paper.classList.add('generating');
+  paper.classList.add('shimmer-bg');
+
+  previewTimeout = setTimeout(() => {
+    const t = calcTotals();
+    const today   = new Date();
+    const validDays = parseInt(getVal('validity')) || 30;
+    const validDate = new Date(today); validDate.setDate(validDate.getDate() + validDays);
+    const fmtDate = d => d.toLocaleDateString('zh-MY',{year:'numeric',month:'long',day:'numeric'});
+
+    paper.innerHTML = `
+      <div class="qp-header">
+        <div>
+          <div class="qp-company-name">${getVal('co-name') || '\u516c\u53f8\u540d\u79f0'}</div>
+          <div class="qp-company-details">
+            ${getVal('co-addr') || ''}<br>
+            ${getVal('co-tel') || ''} \u00b7 ${getVal('co-email') || ''}<br>
+            SSM: ${getVal('co-ssm') || ''}
+          </div>
+        </div>
+        <div class="qp-title-block">
+          <div class="qp-title">QUOTATION</div>
+          <div class="qp-num">\u62a5\u4ef7\u5355\u7f16\u53f7 #QT-2026-${String(quoteCounter).padStart(3,'0')}</div>
+        </div>
+      </div>
+
+      <div class="qp-meta">
+        <div class="qp-meta-block">
+          <div class="qp-meta-lbl">\u62a5\u4ef7\u5bf9\u8c61</div>
+          <div class="qp-meta-val">${getVal('cl-company') || '\u2014'}</div>
+          <div class="qp-meta-sub">${getVal('cl-name') || ''}<br>${getVal('cl-tel') || ''} \u00b7 ${getVal('cl-email') || ''}</div>
+        </div>
+        <div class="qp-meta-block" style="padding-left:32px;">
+          <div class="qp-meta-lbl">\u5355\u636e\u8be6\u60c5</div>
+          <div class="qp-meta-sub">
+            <strong>\u62a5\u4ef7\u65e5\u671f\uff1a</strong>${fmtDate(today)}<br>
+            <strong>\u6709\u6548\u671f\u81f3\uff1a</strong>${fmtDate(validDate)}<br>
+            <strong>\u8d27\u5e01\uff1a</strong>\u9a6c\u6765\u897f\u4e9a\u4ee4\u5409 (MYR)
+          </div>
+        </div>
+      </div>
+
+      <div class="qp-table-wrap">
+        <table class="qp-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>\u54c1\u540d / \u63cf\u8ff0</th>
+              <th style="text-align:right;">\u6570\u91cf</th>
+              <th style="text-align:right;">\u5355\u4ef7 (RM)</th>
+              <th style="text-align:right;">\u5c0f\u8ba1 (RM)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.length === 0 ? '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">\u2014 \u8bf7\u5728\u5de6\u4fa7\u6dfb\u52a0\u62a5\u4ef7\u9879\u76ee \u2014</td></tr>' :
+              items.map((it,i) => `
+                <tr>
+                  <td style="color:var(--muted);font-size:0.78rem;">${i+1}</td>
+                  <td>${it.desc || '\u2014'}</td>
+                  <td style="text-align:right;">${it.qty}</td>
+                  <td style="text-align:right;">${fmt(it.price)}</td>
+                  <td style="text-align:right;">${fmt(it.qty*it.price)}</td>
+                </tr>
+              `).join('')
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="qp-totals">
+        <div class="qp-totals-box">
+          <div class="qpt-row"><span>\u5c0f\u8ba1</span><span>RM ${fmt(t.subtotal)}</span></div>
+          ${t.sst ? `<div class="qpt-row"><span>SST (8%)</span><span>RM ${fmt(t.sstAmt)}</span></div>` : ''}
+          ${t.discount > 0 ? `<div class="qpt-row"><span style="color:var(--red);">\u6298\u6263</span><span style="color:var(--red);">- RM ${fmt(t.discount)}</span></div>` : ''}
+          ${t.shipping > 0 ? `<div class="qpt-row"><span>\u8fd0\u8d39</span><span>RM ${fmt(t.shipping)}</span></div>` : ''}
+          <div class="qpt-row grand"><span>\u603b\u8ba1 (MYR)</span><span>RM ${fmt(t.grand)}</span></div>
+        </div>
+      </div>
+
+      ${getVal('notes') ? `
+      <div class="qp-notes">
+        <div class="qp-notes-title">\u5907\u6ce8 & \u6761\u6b3e</div>
+        <div class="qp-notes-text">${getVal('notes').replace(/\n/g,'<br>')}</div>
+      </div>` : ''}
+
+      <div class="qp-footer">
+        <div class="qp-sig-block">
+          \u6388\u6743\u7b7e\u540d<br><br><br>
+          ________________________<br>
+          ${getVal('co-name') || '\u516c\u53f8\u540d\u79f0'}<br>
+          \u65e5\u671f\uff1a__________________
+        </div>
+        <div class="qp-sig-block">
+          \u5ba2\u6237\u786e\u8ba4\u7b7e\u540d<br><br><br>
+          ________________________<br>
+          ${getVal('cl-company') || '\u5ba2\u6237\u516c\u53f8'}<br>
+          \u65e5\u671f\uff1a__________________
+        </div>
+      </div>
+    `;
+
+    // Fade in
+    paper.classList.remove('shimmer-bg');
+    paper.classList.remove('generating');
+  }, 200);
+}
+
+// ===========================
+// ACTIONS
+// ===========================
+function printQuote() {
+  window.print();
+}
+
+function downloadPDF() {
+  const element = document.getElementById('quote-paper');
+  const opt = {
+    margin: 0,
+    filename: `报价单-QT-2026-${String(quoteCounter).padStart(3,'0')}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(element).save();
+
+  // Celebration
+  confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#1D4ED8', '#10B981', '#F59E0B'] });
+  showToast('doc', 'PDF 已下载！', '报价单已保存到本地');
+}
+
+function clearForm() {
+  items = [];
+  saveToStorage('items', items);
+  renderItems();
+  showToast('trash','\u5df2\u6e05\u7a7a\u62a5\u4ef7\u5355','');
+}
+
+function newQuote() {
+  quoteCounter++;
+  saveToStorage('quoteCounter', quoteCounter);
+  const formWrap = document.getElementById('qform-wrap');
+  formWrap.classList.add('form-fade-out');
+
+  setTimeout(() => {
+    items = [];
+    saveToStorage('items', items);
+    ['cl-company','cl-name','cl-tel','cl-email','cl-addr'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('discount').value = '0';
+    document.getElementById('shipping').value = '0';
+    document.getElementById('sst-toggle').checked = false;
+    renderItems();
+    formWrap.classList.remove('form-fade-out');
+    formWrap.classList.add('form-fade-in');
+    setTimeout(() => formWrap.classList.remove('form-fade-in'), 250);
+    showToast('doc','\u65b0\u62a5\u4ef7\u5355\u5df2\u521b\u5efa', `\u7f16\u53f7 #QT-2026-${String(quoteCounter).padStart(3,'0')}`);
+  }, 250);
+}
+
+// Data flow animation: sequential toasts + tab pulse
+function finalizeQuote() {
+  const toasts = [
+    { icon: 'doc', title: '\u62a5\u4ef7\u5355\u5df2\u751f\u6210', sub: `#QT-2026-${String(quoteCounter).padStart(3,'0')}` },
+    { icon: 'user', title: '\u5ba2\u6237\u8bb0\u5f55\u5df2\u66f4\u65b0', sub: 'CRM \u5df2\u540c\u6b65' },
+    { icon: 'sync', title: '\u6570\u636e\u5df2\u540c\u6b65', sub: '\u5e93\u5b58 & Dashboard' },
+  ];
+
+  const tabIds = ['tab-btn-quote', 'tab-btn-crm', 'tab-btn-inventory', 'tab-btn-dashboard'];
+
+  toasts.forEach((t, i) => {
+    setTimeout(() => {
+      showToast(t.icon, t.title, t.sub);
+      // Pulse corresponding tab
+      if (tabIds[i + 1]) {
+        const tabEl = document.getElementById(tabIds[i + 1]);
+        tabEl.classList.remove('tab-pulse');
+        void tabEl.offsetWidth;
+        tabEl.classList.add('tab-pulse');
+      }
+    }, i * 1200);
+  });
+
+  // Actually print after toasts
+  setTimeout(() => window.print(), 3600);
+}
+
+function copyQuoteNum() {
+  const num = `QT-2026-${String(quoteCounter).padStart(3,'0')}`;
+  navigator.clipboard?.writeText(num).catch(()=>{});
+  showToast('copy',`\u5df2\u590d\u5236\u7f16\u53f7 ${num}`,'');
+}
+
+
+// ===========================
+// TOAST with SVG icons
+// ===========================
+let toastTmr;
+const TOAST_ICONS = {
+  saved: '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#047857" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  doc: '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#1D4ED8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  user: '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#1D4ED8" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  sync: '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#047857" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>',
+  trash: '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#B91C1C" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  copy: '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#1D4ED8" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  email: '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#1D4ED8" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+};
+
+function showToast(icon, title, sub) {
+  clearTimeout(toastTmr);
+  document.getElementById('t-icon').innerHTML = TOAST_ICONS[icon] || TOAST_ICONS.saved;
+  document.getElementById('t-title').textContent = title;
+  document.getElementById('t-sub').textContent   = sub;
+  const el = document.getElementById('toast-el');
+  el.classList.add('show');
+  toastTmr = setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// ===========================
+// CRM MODULE
+// ===========================
+function getOverdueClients() {
+  return CLIENTS_DATA.filter(c => {
+    const last = new Date(c.lastContact);
+    const diff = (REFERENCE_DATE - last) / (1000 * 60 * 60 * 24);
+    return diff > 3;
+  });
+}
+
+function getStatusClass(status) {
+  const map = { '\u6f5c\u5728':'status-potential', '\u8ddf\u8fdb\u4e2d':'status-following', '\u6210\u4ea4':'status-closed', '\u7ef4\u62a4':'status-maintain' };
+  return map[status] || 'status-potential';
+}
+
+function getDaysSince(dateStr) {
+  const d = new Date(dateStr);
+  return Math.floor((REFERENCE_DATE - d) / (1000 * 60 * 60 * 24));
+}
+
+function setCrmFilter(status) {
+  crmFilterStatus = status;
+  renderCRM();
+}
+
+function renderCRM() {
+  const container = document.getElementById('crm-content');
+  const overdue = getOverdueClients();
+
+  // Status counts
+  const statuses = ['\u5168\u90e8', '\u6f5c\u5728', '\u8ddf\u8fdb\u4e2d', '\u6210\u4ea4', '\u7ef4\u62a4'];
+  const statusCounts = {};
+  statuses.forEach(s => {
+    statusCounts[s] = s === '\u5168\u90e8' ? CLIENTS_DATA.length : CLIENTS_DATA.filter(c => c.status === s).length;
+  });
+
+  let html = '';
+
+  // Filter bar
+  html += '<div class="crm-filter-bar">';
+  statuses.forEach(s => {
+    const isActive = crmFilterStatus === s;
+    html += `<button class="crm-filter-pill${isActive ? ' active' : ''}" onclick="setCrmFilter('${s}')">
+      ${s} <span class="crm-filter-count">${statusCounts[s]}</span>
+    </button>`;
+  });
+  html += '</div>';
+
+  if (overdue.length > 0) {
+    html += `<div class="alert-banner warn">
+      <span class="alert-banner-icon"><span class="pulsing-dot"></span></span>
+      <div>
+        <strong>${overdue.length}\u4e2a\u5ba2\u6237\u8d85\u8fc73\u5929\u672a\u8ddf\u8fdb</strong>
+        <ul class="alert-banner-list">
+          ${overdue.map(c => `<li>${c.company} \u2014 ${c.contact}\uff08${getDaysSince(c.lastContact)}\u5929\u524d\uff09</li>`).join('')}
+        </ul>
+      </div>
+    </div>`;
+  }
+
+  // Filtered clients
+  const filtered = crmFilterStatus === '\u5168\u90e8' ? CLIENTS_DATA : CLIENTS_DATA.filter(c => c.status === crmFilterStatus);
+
+  html += '<div class="crm-grid">';
+  filtered.forEach(c => {
+    const days = getDaysSince(c.lastContact);
+    const isOverdue = days > 3;
+    html += `
+      <div class="crm-card${isOverdue ? ' overdue' : ''}" onclick="openCrmModal(${c.id})">
+        <div class="crm-card-top">
+          <div>
+            <div class="crm-company">${c.company}</div>
+            <div class="crm-contact">${c.contact}</div>
+            <div class="crm-phone">${c.phone}</div>
+          </div>
+          <span class="status-badge ${getStatusClass(c.status)}">${c.status}</span>
+        </div>
+        <div class="crm-card-stats">
+          <div class="crm-stat-item">
+            <span class="crm-stat-label">\u8ba2\u5355\u6570</span>
+            <span class="crm-stat-val">${c.totalOrders}</span>
+          </div>
+          <div class="crm-stat-item">
+            <span class="crm-stat-label">\u603b\u6d88\u8d39</span>
+            <span class="crm-stat-val">RM ${fmt(c.totalSpent)}</span>
+          </div>
+          <div class="crm-stat-item">
+            <span class="crm-stat-label">\u6700\u540e\u8054\u7cfb</span>
+            <span class="crm-stat-val">${c.lastContact}</span>
+          </div>
+        </div>
+        ${c.notes ? `<div class="crm-card-note">\u201c${c.notes}\u201d</div>` : ''}
+        ${isOverdue ? `<div class="crm-overdue-tag"><span class="pulsing-dot" style="background:#B91C1C;width:6px;height:6px;margin-right:4px;"></span> \u5df2${days}\u5929\u672a\u8ddf\u8fdb</div>` : ''}
+      </div>`;
+  });
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+function openCrmModal(id) {
+  const c = CLIENTS_DATA.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('modal-client-name').textContent = c.company;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-detail-grid">
+      <div class="modal-detail-item">
+        <span class="modal-detail-label">\u8054\u7cfb\u4eba</span>
+        <span class="modal-detail-value">${c.contact}</span>
+      </div>
+      <div class="modal-detail-item">
+        <span class="modal-detail-label">\u72b6\u6001</span>
+        <span class="modal-detail-value"><span class="status-badge ${getStatusClass(c.status)}">${c.status}</span></span>
+      </div>
+      <div class="modal-detail-item">
+        <span class="modal-detail-label">\u7535\u8bdd</span>
+        <span class="modal-detail-value">${c.phone}</span>
+      </div>
+      <div class="modal-detail-item">
+        <span class="modal-detail-label">\u90ae\u7bb1</span>
+        <span class="modal-detail-value">${c.email}</span>
+      </div>
+      <div class="modal-detail-item">
+        <span class="modal-detail-label">\u603b\u8ba2\u5355\u6570</span>
+        <span class="modal-detail-value">${c.totalOrders} \u5355</span>
+      </div>
+      <div class="modal-detail-item">
+        <span class="modal-detail-label">\u7d2f\u8ba1\u6d88\u8d39</span>
+        <span class="modal-detail-value" style="color:var(--blue);">RM ${fmt(c.totalSpent)}</span>
+      </div>
+      <div class="modal-detail-item">
+        <span class="modal-detail-label">\u6700\u540e\u8054\u7cfb</span>
+        <span class="modal-detail-value">${c.lastContact}\uff08${getDaysSince(c.lastContact)}\u5929\u524d\uff09</span>
+      </div>
+    </div>
+    <div class="modal-section-title">\u5907\u6ce8</div>
+    <div class="modal-notes-box">${c.notes || '\u6682\u65e0\u5907\u6ce8'}</div>
+    <div class="modal-section-title">\u8ba2\u5355\u8bb0\u5f55</div>
+    <div class="modal-notes-box" style="font-size:0.8rem;">
+      ${c.totalOrders > 0 ? `\u5171 ${c.totalOrders} \u5355\uff0c\u7d2f\u8ba1 RM ${fmt(c.totalSpent)}` : '\u6682\u65e0\u8ba2\u5355\u8bb0\u5f55'}
+    </div>
+  `;
+  document.getElementById('crm-modal').classList.add('open');
+}
+
+function closeCrmModal() {
+  document.getElementById('crm-modal').classList.remove('open');
+}
+
+// ===========================
+// CHART INSTANCE MANAGEMENT
+// ===========================
+let clientChart = null, productChart = null, conversionChart = null, stockChart = null;
+
+const chartTooltipConfig = {
+  backgroundColor: '#0F172A',
+  titleFont: { family: "'Plus Jakarta Sans', sans-serif", size: 13 },
+  bodyFont: { family: "'DM Sans', sans-serif", size: 12 },
+  padding: 10,
+  cornerRadius: 8,
+};
+
+// ===========================
+// INVENTORY MODULE
+// ===========================
+function getStockStatus(item) {
+  if (item.stock === 0) return { label: '\u7f3a\u8d27', cls: 'stock-out' };
+  if (item.stock <= item.minStock * 1.2) return { label: '\u504f\u4f4e', cls: 'stock-low' };
+  return { label: '\u5145\u8db3', cls: 'stock-ok' };
+}
+
+function renderInventory() {
+  const container = document.getElementById('inventory-content');
+  const totalValue = INVENTORY.reduce((s, it) => s + it.stock * it.price, 0);
+  const totalItems = INVENTORY.reduce((s, it) => s + it.stock, 0);
+  const lowStockItems = INVENTORY.filter(it => it.stock <= it.minStock * 1.2);
+  const outOfStock = INVENTORY.filter(it => it.stock === 0);
+  const maxStock = Math.max(...INVENTORY.map(it => it.stock));
+
+  let html = '';
+
+  // Summary cards
+  html += `<div class="inv-summary">
+    <div class="inv-summary-card">
+      <div class="inv-summary-label">\u5e93\u5b58\u603b\u503c</div>
+      <div class="inv-summary-value blue" data-countup="${totalValue}" data-prefix="RM ">RM 0</div>
+    </div>
+    <div class="inv-summary-card">
+      <div class="inv-summary-label">\u603b\u5e93\u5b58\u91cf</div>
+      <div class="inv-summary-value" data-countup="${totalItems}">0</div>
+    </div>
+    <div class="inv-summary-card">
+      <div class="inv-summary-label">\u54c1\u9879\u6570\u91cf</div>
+      <div class="inv-summary-value" data-countup="${INVENTORY.length}">0</div>
+    </div>
+    <div class="inv-summary-card">
+      <div class="inv-summary-label">\u9700\u8865\u8d27</div>
+      <div class="inv-summary-value red" data-countup="${lowStockItems.length}">0</div>
+    </div>
+  </div>`;
+
+  // Low stock alert with pulsing dot
+  if (lowStockItems.length > 0) {
+    html += `<div class="alert-banner danger">
+      <span class="alert-banner-icon"><span class="pulsing-dot"></span></span>
+      <div>
+        <strong>${outOfStock.length > 0 ? outOfStock.length + '\u9879\u7f3a\u8d27\uff0c' : ''}${lowStockItems.length}\u9879\u5e93\u5b58\u504f\u4f4e\u9700\u8865\u8d27</strong>
+        <ul class="alert-banner-list">
+          ${lowStockItems.map(it => `<li>${it.name}\uff08${it.sku}\uff09\u2014 \u73b0\u6709 ${it.stock}${it.unit}\uff0c\u6700\u4f4e ${it.minStock}${it.unit}</li>`).join('')}
+        </ul>
+      </div>
+    </div>`;
+  }
+
+  // Stock level chart
+  html += `<div class="inv-chart-wrap">
+    <div class="inv-chart-title">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      库存量 vs 最低库存对比
+    </div>
+    <div class="chart-container" style="height:220px;">
+      <canvas id="stock-level-chart"></canvas>
+    </div>
+  </div>`;
+
+  // Table
+  html += `<div class="inv-table-wrap">
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th>\u4ea7\u54c1\u540d\u79f0</th>
+          <th>SKU</th>
+          <th>\u5e93\u5b58\u91cf</th>
+          <th>\u6700\u4f4e\u5e93\u5b58</th>
+          <th>\u5355\u4ef7 (RM)</th>
+          <th>\u5e93\u5b58\u4ef7\u503c</th>
+          <th>\u72b6\u6001</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${INVENTORY.map(it => {
+          const status = getStockStatus(it);
+          const pct = maxStock > 0 ? Math.min((it.stock / maxStock) * 100, 100) : 0;
+          const barColor = status.cls === 'stock-ok' ? 'var(--green)' : status.cls === 'stock-low' ? '#D97706' : 'var(--red)';
+          const rowClass = it.stock === 0 ? ' class="out-of-stock"' : '';
+          return `<tr${rowClass}>
+            <td>${it.name}</td>
+            <td><span class="inv-sku">${it.sku}</span></td>
+            <td>
+              <div class="stock-bar-wrap">
+                <span class="stock-num">${it.stock}</span>
+                <div class="stock-bar">
+                  <div class="stock-bar-fill" data-width="${pct}" style="width:0%;background:${barColor};"></div>
+                </div>
+                <span style="font-size:0.72rem;color:var(--muted);">${it.unit}</span>
+              </div>
+            </td>
+            <td>${it.minStock} ${it.unit}</td>
+            <td style="font-weight:600;">RM ${fmt(it.price)}</td>
+            <td style="font-weight:600;">RM ${fmt(it.stock * it.price)}</td>
+            <td><span class="stock-status ${status.cls}">${status.label}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  container.innerHTML = html;
+
+  // Render stock level Chart.js chart
+  if (stockChart) { stockChart.destroy(); stockChart = null; }
+  const stockCtx = document.getElementById('stock-level-chart');
+  if (stockCtx) {
+    stockChart = new Chart(stockCtx, {
+      type: 'bar',
+      data: {
+        labels: INVENTORY.map(it => it.name.length > 20 ? it.name.substring(0, 20) + '...' : it.name),
+        datasets: [
+          {
+            label: '现有库存',
+            data: INVENTORY.map(it => it.stock),
+            backgroundColor: INVENTORY.map(it => {
+              const s = getStockStatus(it);
+              return s.cls === 'stock-ok' ? 'rgba(4,120,87,0.7)' : s.cls === 'stock-low' ? 'rgba(217,119,6,0.7)' : 'rgba(185,28,28,0.7)';
+            }),
+            borderRadius: 4,
+          },
+          {
+            label: '最低库存',
+            data: INVENTORY.map(it => it.minStock),
+            backgroundColor: 'rgba(148,163,184,0.3)',
+            borderColor: 'rgba(148,163,184,0.6)',
+            borderWidth: 1,
+            borderRadius: 4,
+            borderDash: [4, 4],
+          }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: true, position: 'top', labels: { font: { family: "'DM Sans', sans-serif", size: 11 }, boxWidth: 12, padding: 12 } },
+          tooltip: chartTooltipConfig,
+        },
+        scales: {
+          x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { family: "'DM Sans', sans-serif", size: 11 } } },
+          y: { grid: { display: false }, ticks: { font: { family: "'DM Sans', sans-serif", size: 11 } } },
+        }
+      }
+    });
+  }
+
+  // Animate stock bars on load
+  requestAnimationFrame(() => {
+    container.querySelectorAll('.stock-bar-fill[data-width]').forEach((bar, i) => {
+      setTimeout(() => {
+        bar.style.width = bar.dataset.width + '%';
+      }, i * 60);
+    });
+  });
+
+  // Animate countUp values
+  container.querySelectorAll('[data-countup]').forEach(el => {
+    const target = parseFloat(el.dataset.countup);
+    const prefix = el.dataset.prefix || '';
+    countUp(el, target, 600, prefix, '');
+  });
+}
+
+// ===========================
+// DASHBOARD MODULE
+// ===========================
+function renderDashboard() {
+  const container = document.getElementById('dashboard-content');
+  const inventoryValue = INVENTORY.reduce((s, it) => s + it.stock * it.price, 0);
+  const overdueClients = getOverdueClients();
+  const totalRevenue = 178400;
+  const quotesGenerated = quoteCounter;
+  const quotesClosed = 16;
+  const conversionRate = Math.round((quotesClosed / quotesGenerated) * 100);
+
+  // Client ranking by totalSpent
+  const clientRanking = [...CLIENTS_DATA].sort((a, b) => b.totalSpent - a.totalSpent);
+  const maxClientSpent = clientRanking[0]?.totalSpent || 1;
+
+  // Product ranking by inventory value (stock * price)
+  const productRanking = [...INVENTORY].sort((a, b) => (b.stock * b.price) - (a.stock * a.price)).slice(0, 6);
+  const maxProductVal = productRanking[0] ? productRanking[0].stock * productRanking[0].price : 1;
+
+  let html = '';
+
+  // KPI row with SVG icons and trend indicators
+  html += `<div class="dash-kpi-row">
+    <div class="dash-kpi">
+      <div class="dash-kpi-label">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        \u672c\u6708\u62a5\u4ef7\u5355
+      </div>
+      <div class="dash-kpi-value" data-countup="${quotesGenerated}">${quotesGenerated}</div>
+      <div class="dash-kpi-sub">\u5355 <span class="kpi-trend up">\u219115%</span></div>
+    </div>
+    <div class="dash-kpi">
+      <div class="dash-kpi-label">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        \u6210\u4ea4\u989d
+      </div>
+      <div class="dash-kpi-value" style="color:var(--green);" data-countup="${totalRevenue}" data-prefix="RM ">RM 0</div>
+      <div class="dash-kpi-sub">\u672c\u6708 <span class="kpi-trend up">\u219122%</span></div>
+    </div>
+    <div class="dash-kpi">
+      <div class="dash-kpi-label">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        \u5e93\u5b58\u603b\u503c
+      </div>
+      <div class="dash-kpi-value" style="color:var(--blue);" data-countup="${inventoryValue}" data-prefix="RM ">RM 0</div>
+      <div class="dash-kpi-sub">${INVENTORY.length} \u4e2a\u54c1\u9879 <span class="kpi-trend down">\u21933%</span></div>
+    </div>
+    <div class="dash-kpi">
+      <div class="dash-kpi-label">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        \u5f85\u8ddf\u8fdb\u5ba2\u6237
+      </div>
+      <div class="dash-kpi-value" style="color:${overdueClients.length > 0 ? 'var(--red)' : 'var(--green)'};" data-countup="${overdueClients.length}">0</div>
+      <div class="dash-kpi-sub">\u8d85\u8fc73\u5929\u672a\u8054\u7cfb</div>
+    </div>
+  </div>`;
+
+  // Charts row - Chart.js canvases
+  html += `<div class="dash-grid">
+    <div class="dash-panel">
+      <div class="dash-panel-title">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        \u5ba2\u6237\u8d21\u732e\u6392\u884c
+      </div>
+      <div class="chart-container"><canvas id="client-chart"></canvas></div>
+    </div>
+    <div class="dash-panel">
+      <div class="dash-panel-title">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        \u4ea7\u54c1\u5e93\u5b58\u4ef7\u503c\u6392\u884c
+      </div>
+      <div class="chart-container"><canvas id="product-chart"></canvas></div>
+    </div>
+  </div>`;
+
+  // Conversion rate + client status distribution
+  html += `<div class="dash-grid">
+    <div class="dash-panel">
+      <div class="dash-panel-title">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        \u62a5\u4ef7\u8f6c\u5316\u7387
+      </div>
+      <div style="position:relative;">
+        <div class="chart-container doughnut"><canvas id="conversion-chart"></canvas>
+          <div class="doughnut-center-text">${conversionRate}%</div>
+        </div>
+        <div style="text-align:center;margin-top:8px;">
+          <div style="font-size:0.88rem;color:var(--text2);font-weight:600;">\u62a5\u4ef7 \u2192 \u6210\u4ea4</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">${quotesGenerated}\u5355\u62a5\u4ef7 \u2192 ${quotesClosed}\u5355\u6210\u4ea4</div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-panel">
+      <div class="dash-panel-title">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        \u5ba2\u6237\u72b6\u6001\u5206\u5e03
+      </div>
+      ${['\u6210\u4ea4','\u8ddf\u8fdb\u4e2d','\u6f5c\u5728','\u7ef4\u62a4'].map((status, idx) => {
+        const count = CLIENTS_DATA.filter(c => c.status === status).length;
+        const pct = Math.max((count / CLIENTS_DATA.length) * 100, 6);
+        const colors = { '\u6210\u4ea4':'var(--green)', '\u8ddf\u8fdb\u4e2d':'var(--blue)', '\u6f5c\u5728':'#D97706', '\u7ef4\u62a4':'#7C3AED' };
+        return `<div class="bar-chart-row">
+          <span class="bar-chart-label">${status}\uff08${count}\uff09</span>
+          <div class="bar-chart-track">
+            <div class="bar-chart-fill" data-width="${pct}" data-delay="${idx * 80}" style="width:0%;background:${colors[status]};">${count}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  container.innerHTML = html;
+
+  // --- Render Chart.js charts ---
+
+  // Client Contribution Horizontal Bar
+  if (clientChart) { clientChart.destroy(); clientChart = null; }
+  const clientCtx = document.getElementById('client-chart');
+  if (clientCtx) {
+    const blueGradients = ['#1D4ED8','#2563EB','#3B82F6','#60A5FA','#93C5FD','#BFDBFE'];
+    clientChart = new Chart(clientCtx, {
+      type: 'bar',
+      data: {
+        labels: clientRanking.map(c => c.company),
+        datasets: [{
+          data: clientRanking.map(c => c.totalSpent),
+          backgroundColor: clientRanking.map((_, i) => blueGradients[i % blueGradients.length]),
+          borderRadius: 5,
+          barPercentage: 0.7,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            ...chartTooltipConfig,
+            callbacks: { label: ctx => `RM ${ctx.raw.toLocaleString()}` }
+          }
+        },
+        scales: {
+          x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { family: "'DM Sans', sans-serif", size: 11 }, callback: v => 'RM ' + (v/1000) + 'k' } },
+          y: { grid: { display: false }, ticks: { font: { family: "'DM Sans', sans-serif", size: 11 } } },
+        }
+      }
+    });
+  }
+
+  // Product Inventory Value Horizontal Bar
+  if (productChart) { productChart.destroy(); productChart = null; }
+  const prodCtx = document.getElementById('product-chart');
+  if (prodCtx) {
+    const greenGradients = ['#047857','#059669','#10B981','#34D399','#6EE7B7','#A7F3D0'];
+    productChart = new Chart(prodCtx, {
+      type: 'bar',
+      data: {
+        labels: productRanking.map(p => p.name.length > 22 ? p.name.substring(0, 22) + '...' : p.name),
+        datasets: [{
+          data: productRanking.map(p => p.stock * p.price),
+          backgroundColor: productRanking.map((_, i) => greenGradients[i % greenGradients.length]),
+          borderRadius: 5,
+          barPercentage: 0.7,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            ...chartTooltipConfig,
+            callbacks: { label: ctx => `RM ${ctx.raw.toLocaleString()}` }
+          }
+        },
+        scales: {
+          x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { family: "'DM Sans', sans-serif", size: 11 }, callback: v => 'RM ' + (v/1000) + 'k' } },
+          y: { grid: { display: false }, ticks: { font: { family: "'DM Sans', sans-serif", size: 11 } } },
+        }
+      }
+    });
+  }
+
+  // Conversion Rate Doughnut
+  if (conversionChart) { conversionChart.destroy(); conversionChart = null; }
+  const convCtx = document.getElementById('conversion-chart');
+  if (convCtx) {
+    conversionChart = new Chart(convCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['\u6210\u4ea4', '\u672a\u6210\u4ea4'],
+        datasets: [{
+          data: [quotesClosed, quotesGenerated - quotesClosed],
+          backgroundColor: ['#10B981', '#E2E8F0'],
+          borderWidth: 0,
+          cutout: '72%',
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            ...chartTooltipConfig,
+            callbacks: { label: ctx => `${ctx.label}: ${ctx.raw} \u5355` }
+          }
+        }
+      }
+    });
+  }
+
+  // Animate remaining CSS bar charts (client status distribution)
+  requestAnimationFrame(() => {
+    container.querySelectorAll('.bar-chart-fill[data-width]').forEach(bar => {
+      const delay = parseInt(bar.dataset.delay) || 0;
+      setTimeout(() => {
+        bar.style.width = bar.dataset.width + '%';
+      }, delay);
+    });
+  });
+
+  // Animate KPI countUp values
+  container.querySelectorAll('[data-countup]').forEach(el => {
+    const target = parseFloat(el.dataset.countup);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    countUp(el, target, 600, prefix, suffix);
+  });
+}
+
+// ===========================
+// GLOBAL SEARCH
+// ===========================
+function handleGlobalSearch(query) {
+  const dropdown = document.getElementById('search-dropdown');
+  if (!query || query.trim().length === 0) {
+    dropdown.classList.remove('open');
+    return;
+  }
+  const q = query.toLowerCase().trim();
+  let html = '';
+  let hasResults = false;
+
+  // Search clients
+  const clientResults = CLIENTS_DATA.filter(c =>
+    c.company.toLowerCase().includes(q) ||
+    c.contact.toLowerCase().includes(q) ||
+    c.email.toLowerCase().includes(q) ||
+    c.phone.includes(q)
+  );
+  if (clientResults.length > 0) {
+    hasResults = true;
+    html += '<div class="search-group-title">客户 CRM</div>';
+    clientResults.forEach(c => {
+      html += `<div class="search-result-item" onclick="navigateToSearchResult('crm', ${c.id})">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>${highlightMatch(c.company, q)}</span>
+        <span class="sr-sub">${c.contact}</span>
+      </div>`;
+    });
+  }
+
+  // Search inventory
+  const invResults = INVENTORY.filter(it =>
+    it.name.toLowerCase().includes(q) ||
+    it.sku.toLowerCase().includes(q)
+  );
+  if (invResults.length > 0) {
+    hasResults = true;
+    html += '<div class="search-group-title">库存产品</div>';
+    invResults.forEach(it => {
+      html += `<div class="search-result-item" onclick="navigateToSearchResult('inventory', ${it.id})">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span>${highlightMatch(it.name, q)}</span>
+        <span class="sr-sub">${it.sku}</span>
+      </div>`;
+    });
+  }
+
+  // Search quote items
+  const quoteResults = items.filter(it => it.desc && it.desc.toLowerCase().includes(q));
+  if (quoteResults.length > 0) {
+    hasResults = true;
+    html += '<div class="search-group-title">当前报价项目</div>';
+    quoteResults.forEach((it, idx) => {
+      html += `<div class="search-result-item" onclick="navigateToSearchResult('quote', ${idx})">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span>${highlightMatch(it.desc, q)}</span>
+        <span class="sr-sub">x${it.qty} @ RM${fmt(it.price)}</span>
+      </div>`;
+    });
+  }
+
+  if (!hasResults) {
+    html = '<div class="notif-empty">未找到匹配结果</div>';
+  }
+
+  dropdown.innerHTML = html;
+  dropdown.classList.add('open');
+}
+
+function highlightMatch(text, query) {
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return text;
+  return text.substring(0, idx) + '<span class="search-highlight">' + text.substring(idx, idx + query.length) + '</span>' + text.substring(idx + query.length);
+}
+
+function navigateToSearchResult(tab, id) {
+  document.getElementById('search-dropdown').classList.remove('open');
+  document.getElementById('global-search').value = '';
+
+  const btn = document.getElementById(`tab-btn-${tab}`);
+  if (btn) switchTab(tab, btn);
+
+  // Highlight after a brief delay to allow render
+  setTimeout(() => {
+    if (tab === 'crm') {
+      const cards = document.querySelectorAll('.crm-card');
+      cards.forEach(card => {
+        if (card.getAttribute('onclick')?.includes(id)) {
+          card.style.boxShadow = '0 0 0 3px rgba(29,78,216,0.4)';
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => { card.style.boxShadow = ''; }, 2000);
+        }
+      });
+    } else if (tab === 'inventory') {
+      const rows = document.querySelectorAll('.inv-table tbody tr');
+      rows.forEach(row => {
+        const skuEl = row.querySelector('.inv-sku');
+        const item = INVENTORY.find(it => it.id === id);
+        if (item && skuEl && skuEl.textContent === item.sku) {
+          row.style.boxShadow = 'inset 0 0 0 2px rgba(29,78,216,0.4)';
+          row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => { row.style.boxShadow = ''; }, 2000);
+        }
+      });
+    } else if (tab === 'quote') {
+      const rows = document.querySelectorAll('.item-row');
+      if (rows[id]) {
+        rows[id].style.boxShadow = '0 0 0 2px rgba(29,78,216,0.4)';
+        rows[id].style.borderRadius = '8px';
+        rows[id].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => { rows[id].style.boxShadow = ''; }, 2000);
+      }
+    }
+  }, 400);
+}
+
+// Close search dropdown on outside click
+document.addEventListener('click', function(e) {
+  const wrap = document.querySelector('.global-search-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('search-dropdown').classList.remove('open');
+  }
+});
+
+// ===========================
+// NOTIFICATION CENTER
+// ===========================
+function getNotifications() {
+  const notifs = [];
+
+  // Overdue clients (>3 days)
+  CLIENTS_DATA.forEach(c => {
+    const days = getDaysSince(c.lastContact);
+    if (days > 3) {
+      notifs.push({
+        type: 'overdue',
+        icon: '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#D97706" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+        text: `${c.company} 已 ${days} 天未跟进`,
+        sub: `联系人: ${c.contact}`,
+        tab: 'crm',
+        id: c.id,
+      });
+    }
+  });
+
+  // Out of stock
+  INVENTORY.forEach(it => {
+    if (it.stock === 0) {
+      notifs.push({
+        type: 'out-of-stock',
+        icon: '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#B91C1C" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+        text: `${it.name} 已缺货`,
+        sub: `SKU: ${it.sku}`,
+        tab: 'inventory',
+        id: it.id,
+      });
+    }
+  });
+
+  // Low stock
+  INVENTORY.forEach(it => {
+    if (it.stock > 0 && it.stock <= it.minStock * 1.2) {
+      notifs.push({
+        type: 'low-stock',
+        icon: '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#D97706" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+        text: `${it.name} 库存偏低`,
+        sub: `现有 ${it.stock}${it.unit}，最低 ${it.minStock}${it.unit}`,
+        tab: 'inventory',
+        id: it.id,
+      });
+    }
+  });
+
+  return notifs;
+}
+
+function updateNotifications() {
+  const notifs = getNotifications();
+  const badge = document.getElementById('notif-badge');
+  badge.textContent = notifs.length > 0 ? notifs.length : '';
+}
+
+function toggleNotifications() {
+  const dropdown = document.getElementById('notif-dropdown');
+  const isOpen = dropdown.classList.contains('open');
+  dropdown.classList.toggle('open');
+  if (!isOpen) renderNotificationDropdown();
+}
+
+function renderNotificationDropdown() {
+  const dropdown = document.getElementById('notif-dropdown');
+  const notifs = getNotifications();
+  let html = `<div class="notif-dropdown-header">
+    <span>通知中心</span>
+    <span style="font-size:0.72rem;color:var(--muted);font-weight:400;">${notifs.length} 条通知</span>
+  </div>`;
+
+  if (notifs.length === 0) {
+    html += '<div class="notif-empty">暂无通知</div>';
+  } else {
+    notifs.forEach(n => {
+      html += `<div class="notif-item" onclick="handleNotifClick('${n.tab}', ${n.id})">
+        <span class="notif-item-icon">${n.icon}</span>
+        <div>
+          <div class="notif-item-text">${n.text}</div>
+          <div class="notif-item-sub">${n.sub}</div>
+        </div>
+      </div>`;
+    });
+  }
+
+  dropdown.innerHTML = html;
+}
+
+function handleNotifClick(tab, id) {
+  document.getElementById('notif-dropdown').classList.remove('open');
+  navigateToSearchResult(tab, id);
+}
+
+// Close notification dropdown on outside click
+document.addEventListener('click', function(e) {
+  const wrap = document.querySelector('.notif-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('notif-dropdown').classList.remove('open');
+  }
+});
+
+// ===========================
+// DARK MODE
+// ===========================
+function toggleDarkMode() {
+  const isDark = document.body.classList.toggle('dark-mode');
+  saveToStorage('darkMode', isDark);
+  updateDarkToggleIcon();
+}
+
+function updateDarkToggleIcon() {
+  const isDark = document.body.classList.contains('dark-mode');
+  document.getElementById('dark-toggle-icon').innerHTML = isDark ? '&#9788;' : '&#9790;';
+}
+
+function restoreDarkMode() {
+  const isDark = loadFromStorage('darkMode', false);
+  if (isDark) document.body.classList.add('dark-mode');
+  updateDarkToggleIcon();
+}
+
+// ===========================
+// INIT
+// ===========================
+restoreDarkMode();
+renderItems();
+
+// Expand company section by default
+document.getElementById('company-body').classList.remove('collapsed');
+
+// Update tab badges and notifications
+updateTabBadges();
+updateNotifications();
+
+// Set Dashboard as default active tab with skeleton
+(function() {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const dashTab = document.getElementById('tab-dashboard');
+  const dashBtn = document.getElementById('tab-btn-dashboard');
+  if (dashBtn) dashBtn.classList.add('active');
+  // Show skeleton first
+  document.getElementById('dashboard-content').innerHTML = getDashboardSkeleton();
+  dashTab.classList.add('active');
+  setTimeout(() => renderDashboard(), 300);
+})();
+</script>
+</body>
+</html>
