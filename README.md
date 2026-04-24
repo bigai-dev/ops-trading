@@ -29,7 +29,7 @@ You need [Node.js](https://nodejs.org) 20+ installed. Check with `node -v`.
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/jtpk2168/demo4-quoteflow.git
+git clone https://github.com/bigai-dev/demo4-quoteflow.git
 cd demo4-quoteflow
 
 # 2. Install dependencies
