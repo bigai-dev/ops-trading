@@ -59,3 +59,8 @@ test-results/
 # Misc
 coverage/
 *.tsbuildinfo
+
+# Next.js
+.next
+out
+next-env.d.ts

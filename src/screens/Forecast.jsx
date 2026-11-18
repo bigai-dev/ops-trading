@@ -121,7 +121,7 @@ export function Forecast() {
   const { revenueForecast, clientPredictions, stockForecasts, cashFlow, insights } = useForecastData()
 
   const tooltipStyle = { background: theme.tooltipBg, color: theme.tooltipText, border: `1px solid ${theme.tooltipBorder}`, borderRadius: 10, fontSize: 13 }
-  const tooltipProps = { contentStyle: tooltipStyle, itemStyle: { color: theme.tooltipText }, labelStyle: { color: theme.tooltipText } }
+  const tooltipProps = { contentStyle: tooltipStyle, itemStyle: { color: theme.tooltipText }, labelStyle: { color: theme.tooltipText }, cursor: { fill: theme.cursor } }
 
   const TrendIcon = ({ trend }) => {
     if (trend === 'up') return <TrendingUp size={14} className="text-emerald-500" />
@@ -182,7 +182,7 @@ export function Forecast() {
             <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} />
             <XAxis dataKey="month" tick={{ fill: theme.text, fontSize: 12 }} />
             <YAxis tick={{ fill: theme.muted, fontSize: 12 }} tickFormatter={v => `RM ${(v/1000).toFixed(0)}k`} />
-            <Tooltip {...tooltipProps} formatter={v => v != null ? `RM ${v.toLocaleString()}` : '—'} />
+            <Tooltip {...tooltipProps} cursor={{ stroke: theme.cursorLine }} formatter={v => v != null ? `RM ${v.toLocaleString()}` : '—'} />
             <Area type="monotone" dataKey="high" stroke="none" fill="url(#gradConfidence)" name={t('ai.confidence')} />
             <Area type="monotone" dataKey="predicted" stroke="#3B82F6" strokeWidth={2} fill="url(#gradPredicted)" name={t('ai.predicted')} strokeDasharray="6 3" />
             <Area type="monotone" dataKey="low" stroke="none" fill="transparent" name="" />

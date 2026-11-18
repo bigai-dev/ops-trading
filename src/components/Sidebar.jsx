@@ -1,8 +1,9 @@
 import { useState } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import {
-  FileText, ClipboardList, Users, Package, LayoutDashboard, BrainCircuit,
   ChevronLeft, ChevronRight, Download, RotateCcw, Moon, Sun,
   Menu, X, Globe,
 } from 'lucide-react'
@@ -10,29 +11,21 @@ import { useDarkMode } from '@/lib/hooks/use-dark-mode'
 import { exportAllToExcel } from '@/lib/excel'
 import { useQuoteFlowStore } from '@/store'
 import { useI18n, LANGS } from '@/lib/i18n'
+import { NAV_ITEMS, navItemFor } from '@/lib/nav'
 
-const NAV_ITEMS = [
-  { key: 'dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard },
-  { key: 'orders', labelKey: 'nav.orders', icon: ClipboardList, badgeKey: 'unpaid' },
-  { key: 'crm', labelKey: 'nav.crm', icon: Users, badgeKey: 'overdue' },
-  { key: 'quote', labelKey: 'nav.quote', icon: FileText },
-  { key: 'inventory', labelKey: 'nav.inventory', icon: Package, badgeKey: 'lowStock' },
-  { key: 'forecast', labelKey: 'nav.forecast', icon: BrainCircuit },
-]
-
-export { NAV_ITEMS }
-
-export function Sidebar({ activeTab, onTabChange, badges = {}, mobileOpen, onMobileClose }) {
+export function Sidebar({ badges = {}, mobileOpen, onMobileClose }) {
   const [collapsed, setCollapsed] = useState(false)
   const { isDark, toggle: toggleDark } = useDarkMode()
   const { clients, inventory, quotes, resetAll } = useQuoteFlowStore()
   const { t, lang, setLang, langs } = useI18n()
   const [showLangMenu, setShowLangMenu] = useState(false)
+  const pathname = usePathname()
+  const activeKey = navItemFor(pathname)?.key
 
   const handleExportAll = () => exportAllToExcel(clients, inventory, quotes)
 
-  const handleNav = (key) => {
-    onTabChange(key)
+  // Picking a screen closes the mobile drawer, as before
+  const handleNav = () => {
     if (onMobileClose) onMobileClose()
   }
 
@@ -84,13 +77,14 @@ export function Sidebar({ activeTab, onTabChange, badges = {}, mobileOpen, onMob
         <nav className="flex-1 px-2 py-3 space-y-0.5" role="navigation" aria-label="Main navigation">
           {NAV_ITEMS.map(item => {
             const Icon = item.icon
-            const isActive = activeTab === item.key
+            const isActive = activeKey === item.key
             const badgeCount = item.badgeKey ? badges[item.badgeKey] : 0
             const label = t(item.labelKey)
             const button = (
-              <button
+              <Link
                 key={item.key}
-                onClick={() => handleNav(item.key)}
+                href={item.path}
+                onClick={handleNav}
                 aria-current={isActive ? 'page' : undefined}
                 className={`sidebar-nav-item group flex items-center gap-2.5 w-full rounded-lg text-[15px] font-medium transition-all duration-150 cursor-pointer
                   ${!showLabel ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'}
@@ -113,14 +107,14 @@ export function Sidebar({ activeTab, onTabChange, badges = {}, mobileOpen, onMob
                 {!showLabel && badgeCount > 0 && (
                   <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500" />
                 )}
-              </button>
+              </Link>
             )
 
             if (!showLabel) {
               return (
                 <Tooltip key={item.key}>
-                  <TooltipTrigger asChild>
-                    <div className="relative">{button}</div>
+                  <TooltipTrigger render={<div className="relative" />}>
+                    {button}
                   </TooltipTrigger>
                   <TooltipContent side="right" sideOffset={8}>
                     {label}
@@ -196,7 +190,7 @@ function SidebarAction({ icon: Icon, label, collapsed, onClick, className = '' }
   if (collapsed) {
     return (
       <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipTrigger render={button} />
         <TooltipContent side="right" sideOffset={8}>{label}</TooltipContent>
       </Tooltip>
     )

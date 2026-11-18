@@ -1,18 +1,17 @@
 import { useState, useRef, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Sidebar } from '@/components/Sidebar'
+import { navItemFor } from '@/lib/nav'
 import { useQuoteFlowStore } from '@/store'
 import { Bell, Menu } from 'lucide-react'
 import { useI18n } from '@/lib/i18n'
-import { Dashboard } from './Dashboard'
-import { QuoteBuilder } from './QuoteBuilder'
-import { Orders } from './Orders'
-import { CRM } from './CRM'
-import { Inventory } from './Inventory'
-import { Forecast } from './Forecast'
 
-export function QuoteFlowLayout() {
-  const [tab, setTab] = useState('dashboard')
+// Sidebar + header shared by every screen. Each screen has its own address
+// under app/ (e.g. app/quotes/page.jsx) and arrives here as `children`.
+export function QuoteFlowLayout({ children }) {
+  const pathname = usePathname()
+  const tab = navItemFor(pathname)?.key ?? 'dashboard'
   const { getNotifications, getLowStockCount, getOverdueClients, quotes } = useQuoteFlowStore()
   const { t } = useI18n()
   const notifications = getNotifications()
@@ -41,8 +40,6 @@ export function QuoteFlowLayout() {
   return (
     <div data-theme="quoteflow" className="flex h-dvh overflow-hidden bg-background text-foreground">
       <Sidebar
-        activeTab={tab}
-        onTabChange={setTab}
         badges={badges}
         mobileOpen={mobileMenuOpen}
         onMobileClose={() => setMobileMenuOpen(false)}
@@ -103,12 +100,7 @@ export function QuoteFlowLayout() {
 
         <main className="flex-1 overflow-y-auto">
           <div className="p-3 sm:p-4 md:p-6 max-w-350">
-            {tab === 'quote' && <QuoteBuilder />}
-            {tab === 'orders' && <Orders />}
-            {tab === 'crm' && <CRM />}
-            {tab === 'inventory' && <Inventory />}
-            {tab === 'dashboard' && <Dashboard />}
-            {tab === 'forecast' && <Forecast />}
+            {children}
           </div>
         </main>
       </div>

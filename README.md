@@ -20,11 +20,11 @@ QuoteFlow runs entirely in the browser with all data saved to your browser's loc
 
 ## Tech Stack
 
-- **Framework / Build:** React 19 with Vite
+- **Framework / Build:** Next.js 16 (App Router, Turbopack) + React 19
 - **Language:** JavaScript (JSX)
 - **Styling:** Tailwind CSS v4 with shadcn/ui components and the DM Sans / Plus Jakarta Sans fonts (loaded from Google Fonts)
 - **State:** Zustand with the `persist` middleware (localStorage)
-- **Routing:** react-router-dom
+- **Navigation:** Next.js App Router — each screen has its own address, so a refresh stays on the same screen
 - **Charts:** Recharts
 - **Icons:** lucide-react
 - **Exports:** html2pdf.js (PDF) and xlsx (Excel)
@@ -51,23 +51,28 @@ None required. QuoteFlow is fully client-side and uses no API keys, no `.env` fi
 npm run dev
 ```
 
-Then open the URL it prints (usually http://localhost:5173) in your browser.
+Then open http://localhost:3000 in your browser.
 
 Other useful commands:
 
 ```bash
-npm run build     # build for production into dist/
-npm run preview   # preview the production build locally
+npm run build     # build for production into .next/
+npm start         # serve the production build locally
+npm run lint      # run ESLint
 ```
 
 ## Project Structure
 
-- `src/App.jsx` — application entry that renders the main layout
-- `src/main.jsx` — React root with router, i18n, tooltip, and toast providers
+- `app/` — Next.js routes: `layout.jsx` (page shell + metadata) and one `page.jsx` per screen — `/` (Dashboard), `/orders`, `/crm`, `/quotes` (Quote Builder), `/inventory`, `/forecast`; `not-found.jsx` sends unknown addresses back to `/`
+- `src/components/AppShell.jsx` — providers (language, tooltips, toasts) + the sidebar/header layout; renders in the browser only, since all data lives in `localStorage`
+- `next.config.mjs` — Next.js config
+- `postcss.config.mjs` — Tailwind CSS v4 via `@tailwindcss/postcss`
+- `jsconfig.json` — the `@/` path alias (points to `src/`)
+- `src/components/AppShell.jsx` — language, tooltip and toast providers; renders in the browser only, since all data lives in local storage
 - `src/index.css` — Tailwind v4 tokens and light/dark theme variables
 - `src/data.js` — default sample data (clients, inventory, quotes)
 - `src/store.js` — Zustand store holding all app state and persistence
-- `src/pages/` — the main screens (Dashboard, QuoteBuilder, Orders, CRM, Inventory, Forecast)
+- `src/screens/` — the main screens (Dashboard, QuoteBuilder, Orders, CRM, Inventory, Forecast) and `index.jsx` with the sidebar + header layout
 - `src/components/` — shared components, plus `ui/` shadcn/ui primitives
 - `src/lib/` — i18n strings, Excel export helpers, utilities, and custom hooks (dark mode, chart theme, count-up)
 

@@ -15,6 +15,9 @@ const THEMES = {
       tooltipBg: '#1E293B',
       tooltipText: '#F8FAFC',
       tooltipBorder: '#334155',
+      surface: '#FEFEFF', // --color-card (pie slice gaps)
+      cursor: 'rgba(15, 23, 42, 0.05)', // soft hover band
+      cursorLine: 'rgba(15, 23, 42, 0.2)',
     },
     dark: {
       primary: '#60A5FA',
@@ -29,6 +32,9 @@ const THEMES = {
       tooltipBg: '#0F172A',
       tooltipText: '#F8FAFC',
       tooltipBorder: '#475569',
+      surface: '#0E141D', // --color-card in dark
+      cursor: 'rgba(255, 255, 255, 0.05)',
+      cursorLine: 'rgba(255, 255, 255, 0.2)',
     },
   },
 }

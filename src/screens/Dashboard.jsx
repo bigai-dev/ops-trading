@@ -52,7 +52,7 @@ export function Dashboard() {
   ]
 
   const tooltipStyle = { background: theme.tooltipBg, color: theme.tooltipText, border: `1px solid ${theme.tooltipBorder}`, borderRadius: 10, fontSize: 13 }
-  const tooltipProps = { contentStyle: tooltipStyle, itemStyle: { color: theme.tooltipText }, labelStyle: { color: theme.tooltipText } }
+  const tooltipProps = { contentStyle: tooltipStyle, itemStyle: { color: theme.tooltipText }, labelStyle: { color: theme.tooltipText }, cursor: { fill: theme.cursor } }
 
   return (
     <div className="page-enter space-y-6">
@@ -106,7 +106,7 @@ export function Dashboard() {
         <ChartCard title={t('dash.inventoryStatus')} icon={<Package size={15} className="text-muted-foreground" />} className="lg:col-span-2 stagger-item">
           <ResponsiveContainer width="100%" height={220}>
             <PieChart>
-              <Pie data={invData} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={4} dataKey="value" animationDuration={800}>
+              <Pie data={invData} stroke={theme.surface} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={4} dataKey="value" animationDuration={800}>
                 {invData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
               </Pie>
               <Tooltip {...tooltipProps} />
@@ -129,7 +129,7 @@ export function Dashboard() {
             <>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
-                  <Pie data={paymentData} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={4} dataKey="value" animationDuration={800}>
+                  <Pie data={paymentData} stroke={theme.surface} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={4} dataKey="value" animationDuration={800}>
                     {paymentData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                   </Pie>
                   <Tooltip {...tooltipProps} />
